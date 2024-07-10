@@ -19,6 +19,7 @@ Data/ProcessedData/100Car/*
 Data/ProcessedData/highD/*
 Data/ProcessedData/highD/lane_changing/*
 Data/RawData/highD/*
+!Data
 !Data/OutputData/conflict_probability/optimal_warning
 !Data/OutputData/trained_models/highD_LC
 !Data/ProcessedData/highD/lane_changing

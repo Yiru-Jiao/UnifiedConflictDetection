@@ -5,4 +5,5 @@ __pycache__
 **/*.csv
 **/*.h5
 **/*epoch.pth
-!/Data/ProcessedData/100Car/*
+!/Data/RawData/100Car/CleanedData/*
+!/Data/RawData/100Car/ProcessedData/*

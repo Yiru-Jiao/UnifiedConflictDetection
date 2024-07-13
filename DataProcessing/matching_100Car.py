@@ -10,8 +10,8 @@ import numpy as np
 import utils.TwoDimTTC as TwoDimTTC
 
 # Define file paths
-path_cleaned = '../Process_100Car/CleanedData/'  # Path to cleaned data outside the repository
-path_processed = '../Process_100Car/ProcessedData/'  # Path to processed data outside the repository
+path_cleaned = './Data/RawData/100Car/CleanedData/'
+path_processed = './Data/RawData/100Car/ProcessedData/'
 path_matched = './Data/InputData/100Car/'  # Path to save matched data
 
 

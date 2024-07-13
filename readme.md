@@ -7,10 +7,9 @@ This study proposes a unified theory and statistical learning approach for traff
 `numpy`, `pandas`, `tqdm`, `scipy`, `joblib`, `pytorch`, `gpytorch=1.11`, `opencv`, `imageio`, `matplotlib`, `jupyter notebook`
 
 ## In order to repeat the experiments:
-- __Step 0 Download used data__
-    - Download the highD dataset from [here](https://www.highd-dataset.com/) and the 100-Car Naturalistic Driving Study data from [here](https://www.nhtsa.gov/research-data/100-car-naturalistic-driving-study-ncnds).
-    - Put the highD dataset in the `./DataProcessing/highD` folder and the 100-Car NDS data in the `./DataProcessing/100Car` folder.
-    - Download the 
+- __Step 0 Data preparation__
+    - Step 0.1 Apply for and download the highD dataset from [the website](https://levelxdata.com/highd-dataset/) and put the data in the folder `./Data/RawData/highD/`.
+    - Step 0.2 We have processed and saved the 100Car NDS data in the folder `./Data/ProcessedData/100Car/`. The readers are still encouraged to explore the raw data with the code in the [repository](https://github.com/Yiru-Jiao/Reconstruct100CarNDSData) if interested.
 
 - __Step 1 Data processing__
     - Step 1.1 Run `./DataProcessing/preprocessing_highD.py` to add heading directions of vehicles.

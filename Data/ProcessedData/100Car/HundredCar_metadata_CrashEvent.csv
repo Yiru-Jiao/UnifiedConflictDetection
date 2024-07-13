@@ -1,0 +1,40 @@
+webfileid,vehicle webid,event start,event end,event severity,target type,target,target_width,target_length,ego_width,ego_length
+8302,1023,70,113,Crash,Automobile,Single vehicle conflict,1.8,4.5,1.744,4.595
+8313,1074,5869,5939,Crash,Automobile,lead vehicle,1.8,4.5,1.695,4.42
+8322,1049,2196,2263,Crash,Automobile,lead vehicle,1.8,4.5,1.744,4.595
+8328,1038,7180,7311,Crash,Automobile,following vehicle,1.8,4.5,1.744,4.595
+8360,1019,67,79,Crash,Automobile,following vehicle,1.8,4.5,1.763,4.836
+8451,1060,877,960,Crash,Automobile,vehicle turning across another path (opposite direction),1.8,4.5,1.744,4.595
+8453,1005,7985,8027,Crash,Sport Utility Vehicles,lead vehicle,2.0,4.8,1.78,4.785
+8469,1011,7242,7295,Crash,Automobile,lead vehicle,1.8,4.5,1.744,4.595
+8475,2014,3076,3164,Crash,Pickup truck,lead vehicle,1.9,5.9,1.782,4.579
+8503,1012,11142,11198,Crash,Sport Utility Vehicles,parked vehicle,2.0,4.8,1.695,4.42
+8512,1021,20,174,Crash,Automobile,following vehicle,1.8,4.5,1.78,4.785
+8554,1040,190,251,Crash,Automobile,following vehicle,1.8,4.5,1.78,4.785
+8626,1008,16983,17030,Crash,Automobile,parked vehicle,1.8,4.5,1.78,4.785
+8633,1042,132,162,Crash,Automobile,lead vehicle,1.8,4.5,1.763,4.836
+8657,1070,144,187,Crash,Automobile,lead vehicle,1.8,4.5,1.744,4.595
+8661,1060,1506,1683,Crash,Automobile,lead vehicle,1.8,4.5,1.744,4.595
+8676,1074,21952,22009,Crash,Automobile,lead vehicle,1.8,4.5,1.695,4.42
+8678,1061,10835,10889,Crash,Automobile,lead vehicle,1.8,4.5,1.744,4.595
+8698,1074,19072,19129,Crash,Pickup truck,following vehicle,1.9,5.9,1.695,4.42
+8713,1015,5496,5584,Crash,Pickup truck,following vehicle,1.9,5.9,1.744,4.595
+8733,1011,369,411,Crash,Unknown vehicle type,lead vehicle,1.8,4.5,1.744,4.595
+8763,1051,2062,2093,Crash,Automobile,vehicle in adjacent lane,1.8,4.5,1.744,4.595
+8790,1049,2796,2860,Crash,Automobile,lead vehicle,1.8,4.5,1.744,4.595
+8794,1041,6623,6642,Crash,Van (minivan or standard van),obstacle/object in roadway,2.1,5.5,1.695,4.42
+8795,1041,16639,16724,Crash,Automobile,following vehicle,1.8,4.5,1.695,4.42
+8812,1020,10382,10435,Crash,Automobile,Single vehicle conflict,1.8,4.5,1.744,4.595
+8856,1041,4761,4853,Crash,Automobile,lead vehicle,1.8,4.5,1.695,4.42
+8907,1047,5257,5280,Crash,Automobile,Single vehicle conflict,1.8,4.5,1.78,4.785
+8921,1034,41473,41557,Crash,Automobile,lead vehicle,1.8,4.5,1.695,4.42
+8922,1034,2666,2698,Crash,Automobile,Single vehicle conflict,1.8,4.5,1.695,4.42
+8924,1008,12946,12982,Crash,Automobile,parked vehicle,1.8,4.5,1.78,4.785
+8927,1085,5192,5262,Crash,Automobile,parked vehicle,1.8,4.5,1.744,4.595
+8940,1042,13275,13335,Crash,Automobile,following vehicle,1.8,4.5,1.763,4.836
+8941,1042,14386,14452,Crash,Automobile,following vehicle,1.8,4.5,1.763,4.836
+8946,1020,129,163,Crash,Sport Utility Vehicles,lead vehicle,2.0,4.8,1.744,4.595
+8960,1007,3552,3604,Crash,Automobile,following vehicle,1.8,4.5,1.695,4.42
+9023,1034,2567,2620,Crash,Sport Utility Vehicles,following vehicle,2.0,4.8,1.695,4.42
+9076,1032,13219,13275,Crash,Sport Utility Vehicles,vehicle turning across another path (opposite direction),2.0,4.8,1.763,4.836
+9123,1077,3265,3338,Crash,Sport Utility Vehicles,following vehicle,2.0,4.8,1.695,4.42

@@ -5,7 +5,4 @@ __pycache__
 **/*.csv
 **/*.h5
 **/*epoch.pth
-DataProcessing
-Demonstration
-GaussianProcessRegression
-Visualisation
+!/Data/ProcessedData/100Car/*

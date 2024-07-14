@@ -248,11 +248,12 @@ def visual_highD(lane_markings, frameid, veh_i, veh_j, df, df_view_i, other_vehs
     ax.plot(veh_i[veh_i['frame_id']<=frameid]['x'], veh_i[veh_i['frame_id']<=frameid]['y'], 'r', lw=1, alpha=0.2)
     ax.plot(veh_j[veh_j['frame_id']<=frameid]['x'], veh_j[veh_j['frame_id']<=frameid]['y'], 'b', lw=1, alpha=0.35)
     ax = draw_vehs(ax, other_vehs[other_vehs['frame_id']==frameid].reset_index(), df[df['frame_id']==frameid], annotate=False)
-    ax.set_yticks([])
     ax.xaxis.tick_top()
     ax.tick_params(axis='x', which='major', labelsize=8, pad=0)
+    ax.tick_params(axis='y', which='major', labelsize=8, pad=0)
     ax.set_xlabel('Position (m)', fontsize=9, labelpad=5)
     ax.xaxis.set_label_position('top')
+    ax.invert_yaxis() # y-axis is inverted because the y-axis in highD directs from top to bottom
 
     ax_v = fig.add_subplot(gs[8:16,1:7])
     ax_v.plot(df['time'], df['speed_i'], '--', label='Ego vehicle', c='r', lw=0.5)

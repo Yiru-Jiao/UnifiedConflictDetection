@@ -44,7 +44,7 @@ for idx in tqdm(summary2vis.index, desc='highD'):
     gif_dir = gif_dir + f"intensity_{summary2vis.loc[idx,'intensity_lower']:.1f}" + '-' + f"{summary2vis.loc[idx,'intensity_upper']:.1f}"
     gif_dir = gif_dir + '.gif'
 
-    with imageio.get_writer(gif_dir, mode='I', duration=0.1) as writer:
+    with imageio.get_writer(gif_dir, mode='I', duration=0.1, loop=0) as writer:
         for frame in frames:
             # Convert color from BGR to RGB
             frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -86,10 +86,32 @@ for idx, folder in tqdm(enumerate(folder_list), desc='100Car', total=len(folder_
         gif_dir = gif_dir + f"trip_{trip_id}"
         gif_dir = gif_dir + '.gif'
 
-        with imageio.get_writer(gif_dir, mode='I', duration=0.1) as writer:
+        with imageio.get_writer(gif_dir, mode='I', duration=0.1, loop=0) as writer:
             for frame in frames:
                 # Convert color from BGR to RGB
                 frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
                 writer.append_data(frame_rgb)
 
         writer.close()
+
+
+# Figure 9 
+
+image_dir = path_output + 'video_images/Figure9/'
+filelists = sorted(glob.glob(image_dir+'*.png'), key=lambda x: int(x[-10:-4]))
+
+frames = []
+for file in filelists:
+    img = cv2.resize(cv2.imread(file), None, fx=0.25, fy=0.25)
+    frames.append(img)
+
+gif_dir = path_figure + 'Figure9/Figure9.gif'
+
+with imageio.get_writer(gif_dir, mode='I', duration=0.1, loop=0) as writer:
+    for frame in frames:
+        # Convert color from BGR to RGB
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        writer.append_data(frame_rgb)
+
+writer.close()
+

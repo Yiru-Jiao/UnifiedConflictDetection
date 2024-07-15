@@ -86,18 +86,18 @@ for idx, folder in tqdm(enumerate(folder_list), desc='100Car', total=len(folder_
         out.release()
 
 
-# # ICTCT 
+# Figure 9 
 
-# image_dir = r'C:/SURFdrive/PhD progress/PhDResearch/4_Conflict/ICTCT2024/VisualExample/Images/'
-# filelists = sorted(glob.glob(image_dir+'*.png'), key=lambda x: int(x[-10:-4]))
+image_dir = path_output + 'video_images/Figure9/'
+filelists = sorted(glob.glob(image_dir+'*.png'), key=lambda x: int(x[-10:-4]))
 
-# img = cv2.imread(filelists[0])
-# height, width, layers = img.shape
-# video_dir = r'C:/SURFdrive/PhD progress/PhDResearch/4_Conflict/ICTCT2024/VisualExample/example.mp4'
+img = cv2.imread(filelists[0])
+height, width, layers = img.shape
+video_dir = path_figure + 'Figure9/Figure9.mp4'
 
-# out = cv2.VideoWriter(video_dir, cv2.VideoWriter_fourcc(*'mp4v'), 10, (width, height))
-# for file in filelists:
-#     img = cv2.imread(file)
-#     out.write(img)
+out = cv2.VideoWriter(video_dir, cv2.VideoWriter_fourcc(*'mp4v'), 10, (width, height))
+for file in filelists:
+    img = cv2.imread(file)
+    out.write(img)
 
-# out.release()
+out.release()

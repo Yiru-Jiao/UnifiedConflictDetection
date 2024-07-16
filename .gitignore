@@ -1,9 +1,8 @@
-__pycache__
 **/__pycache__
 **/*.png
 **/*.mp4
 **/*.csv
 **/*.h5
-**/*epoch.pth
+**/*.pth
 !/Data/RawData/100Car/CleanedData/*
 !/Data/RawData/100Car/ProcessedData/*

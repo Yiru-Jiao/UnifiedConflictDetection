@@ -26,12 +26,6 @@ metadatafiles =  sorted(glob.glob(path_raw + 'highD/RecordingMetadata/*.csv'))
 metadata = []
 for metadatafile in metadatafiles:
     df = pd.read_csv(metadatafile)
-    lane_markings = [float(y) for lane in ['lowerLaneMarkings','upperLaneMarkings'] for y in df[lane].iloc[0].split(';')]
-    lane_markings = np.sort(lane_markings)
-    df['max_y'] = lane_markings[-1] + lane_markings[0]
-    lane_markings = lane_markings[-1] + lane_markings[0] - lane_markings
-    df['corrected_LaneMarkings'] = ';'.join([str(round(x,2)) for x in lane_markings])
-    df.to_csv(metadatafile, index=False)
     metadata.append(df)
 metadata = pd.concat(metadata)
 metadata['lane_num'] = metadata.lowerLaneMarkings.str.len()//5
@@ -46,12 +40,11 @@ ekf_params = np.array([100.2683, 0.01, 0.01, 11.1333, 2.5, 52.4380])
 print('Processing order:', metadata.locationId.unique())
 for locid in tqdm(metadata.locationId.unique(), desc='location'):
     loc = 'highD_' + str(locid).zfill(2)
-    data_files = [str(id).zfill(2) + '_tracks' for id in metadata[(metadata.locationId==locid)]['id'].values]
-    metadata_files = [str(id).zfill(2) + '_tracksMeta' for id in metadata[(metadata.locationId==locid)]['id'].values]
-    max_y_list = metadata[(metadata.locationId==locid)]['max_y'].values
+    data_files = [str(id).zfill(2) + '_tracks' for id in metadata[(metadata.locationId==locid)].id.values]
+    metadata_files = [str(id).zfill(2) + '_tracksMeta' for id in metadata[(metadata.locationId==locid)].id.values]
     data = []
 
-    for data_file, metadata_file, max_y in tqdm(zip(data_files, metadata_files, max_y_list), total=len(data_files), desc='file'):
+    for data_file, metadata_file in tqdm(zip(data_files, metadata_files), total=len(data_files), desc='file'):
         file_id = int(data_file[:2])
         df = pd.read_csv(path_raw + 'highD/' + data_file +'.csv')
         meta = pd.read_csv(path_raw + 'highD/' + metadata_file +'.csv')
@@ -73,14 +66,10 @@ for locid in tqdm(metadata.locationId.unique(), desc='location'):
         # 3) further processing will be conducted later to restimate the heading and position
         df['x'] = df['x'] + df['length']/2
         df['y'] = df['y'] + df['width']/2
-        # mirror the y-axis because the y-axis in highD points from top to bottom, which is opposite to the common convention
-        df['y'] = max_y - df['y']
-        df['vy'] = -df['vy']
-        df['ay'] = -df['ay']
         # downsample from 25 fps to 10 fps and obtain heading direction using extended kalman filter
         track_ids = df['track_id'].unique()
         df = df.set_index('track_id')
-        df = pd.concat(Parallel(n_jobs=15)(delayed(ekf.ekf)(ekf_params, df, track_id, False) for track_id in track_ids)).reset_index(drop=True)
+        df = pd.concat(Parallel(n_jobs=4)(delayed(ekf.ekf)(ekf_params, df, track_id, False) for track_id in track_ids)).reset_index(drop=True)
         df['vx'] = df['speed_kf']*np.cos(df['psi_kf'])
         df['vy'] = df['speed_kf']*np.sin(df['psi_kf'])
         df['hx'] = np.cos(df['psi_kf'])

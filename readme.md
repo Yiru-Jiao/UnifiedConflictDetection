@@ -1,5 +1,5 @@
 # Code for "A Unified Theory and Statistical Learning Approach for Traffic Conflict Detection"
-This study is being submitted to a journal. A preprint is available at [arXiv](https://arxiv.org/abs/).
+This study is being prepared for submission. A preprint is available at [arXiv](https://arxiv.org/abs/2407.10959).
 
 ## Access to dynamic figures
 Dynamic visualisations in this paper are saved in the folder [`./Data/DynamicFigures/`](Data/DynamicFigures/). Below we present the example in Figure 9 of a conflict where the ego (red) vehicle changes lane twice continuously and has a potential collision with the target (blue) vehicle in the intermediate lane.
@@ -48,11 +48,11 @@ This study proposes a unified theory and statistical learning approach for traff
 ## Citation
 ````latex
 @misc{jiao2024,
-  title = {A unified theory and statistical learning approach for traffic conflict detection},
-  author = {Jiao,  Yiru and Calvert,  Simeon C. and van Cranenburgh,  Sander and van Lint,  Hans},
-  year = {2024},
-  eprint={},
-  doi = {},
-  archivePrefix = {arXiv},  
+      title={A unified theory and statistical learning approach for traffic conflict detection}, 
+      author={Jiao, Yiru and Calvert, Simeon C. and van Cranenburgh, Sander and van Lint, Hans},
+      year={2024},
+      eprint={2407.10959},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
 }
 ````

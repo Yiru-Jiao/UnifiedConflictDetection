@@ -80,7 +80,7 @@ for locid in tqdm(metadata.locationId.unique(), desc='location'):
         # downsample from 25 fps to 10 fps and obtain heading direction using extended kalman filter
         track_ids = df['track_id'].unique()
         df = df.set_index('track_id')
-        df = pd.concat(Parallel(n_jobs=4)(delayed(ekf.ekf)(ekf_params, df, track_id, False) for track_id in track_ids)).reset_index(drop=True)
+        df = pd.concat(Parallel(n_jobs=15)(delayed(ekf.ekf)(ekf_params, df, track_id, False) for track_id in track_ids)).reset_index(drop=True)
         df['vx'] = df['speed_kf']*np.cos(df['psi_kf'])
         df['vy'] = df['speed_kf']*np.sin(df['psi_kf'])
         df['hx'] = np.cos(df['psi_kf'])

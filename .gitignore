@@ -4,5 +4,3 @@
 **/*.csv
 **/*.h5
 **/*.pth
-!/Data/RawData/100Car/CleanedData/*
-!/Data/RawData/100Car/ProcessedData/*

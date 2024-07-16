@@ -17,7 +17,7 @@ This study proposes a unified theory and statistical learning approach for traff
 ## In order to repeat the experiments:
 - __Step 0 Data preparation__
     - Step 0.1 Apply for and download the highD dataset from [the website](https://levelxdata.com/highd-dataset/) and put the data in the folder `./Data/RawData/highD/`.
-    - Step 0.2 We have processed and saved the 100Car NDS data in the folder `./Data/ProcessedData/100Car/`. The readers are still encouraged to explore the raw data with the code in the [repository](https://github.com/Yiru-Jiao/Reconstruct100CarNDSData) if interested.
+    - Step 0.2 We have processed and saved the 100Car NDS data in the folder `./Data/RawData/100Car/`. If interested, the readers are welcome to explore original 100Car NDS data with the code in the [repository](https://github.com/Yiru-Jiao/Reconstruct100CarNDSData).
 
 - __Step 1 Data processing__
     - Step 1.1 Run `./DataProcessing/preprocessing_highD.py` to add heading directions of vehicles.

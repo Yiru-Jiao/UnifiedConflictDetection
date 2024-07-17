@@ -435,7 +435,7 @@ def plot_warning(warning_ttc, warning_drac, warning_psd, warning_unified):
                         medianprops=dict(color=color, lw=0.75),
                         flierprops=dict(marker=marker, mfc='none', mec=color, ms=4, mew=0.75))
         
-        axes[2].boxplot(_selected['timeliness'].dropna(), labels=[label+'\n'+str(round(_selected['timeliness'].median(), 1))+'s'],
+        axes[2].boxplot(_selected['timeliness'].dropna(), labels=[label+f'\n{_selected['timeliness'].median():.2f}s'],
                         positions=[pos], widths=0.5,
                         boxprops=dict(color=color, lw=0.75),
                         whiskerprops=dict(color=color, lw=0.75),

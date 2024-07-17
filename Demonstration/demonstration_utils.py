@@ -334,7 +334,7 @@ def read_selected(conflict_indicator, path_output):
 
 
 def extract_warning_info(warning, conflict_indicator):
-    statistics = warning.groupby(['threshold']).agg({'true warning':'sum','false warning':'sum','warning period':lambda x: x[x>0].mean()})
+    statistics = warning.groupby(['threshold']).agg({'true warning':'sum','false warning':'sum','warning period':'median'})
     statistics['true positive rate'] = statistics['true warning'] / warning['trip_id'].nunique()
     statistics['false positive rate'] = statistics['false warning'] / warning['trip_id'].nunique()
     if conflict_indicator=='DRAC' or conflict_indicator=='Unified':
@@ -385,7 +385,7 @@ def plot_warning(warning_ttc, warning_drac, warning_psd, warning_unified):
 
     radius = np.sqrt((1-optimal_point['true positive rate'])**2+optimal_point['false positive rate']**2).iloc[0]
     axes[0].add_patch(plt.Circle((0, 1), radius, color=cmap(0.), fill=False, clip_on=True, lw=0.25, zorder=-5))
-    ax_focus = axes[0].inset_axes([0.41, 0.1, 0.55, 0.55], xlim=(-0.01, 0.16), ylim=(0.84, 1.01))
+    ax_focus = axes[0].inset_axes([0.43, 0.1, 0.53, 0.53], xlim=(-0.01, 0.16), ylim=(0.84, 1.01))
     ax_focus.tick_params(axis='both', labelsize=8, pad=1)
     ax_focus.set_yticks([0.85, 0.90, 0.95, 1.0])
     ax_focus.set_xticks([0, 0.05, 0.10, 0.15])
@@ -407,7 +407,9 @@ def plot_warning(warning_ttc, warning_drac, warning_psd, warning_unified):
         line.set_color('k')
         line.set_linestyle('--')
         line.set_linewidth(0.5)
-    rect.set_edgecolor('none')
+    rect.set_edgecolor('k')
+    rect.set_linestyle('--')
+    rect.set_linewidth(0.5)
 
     handles, labels = axes[0].get_legend_handles_labels()
     axes[0].legend([(handles[0]), (handles[1],handles[2]), 

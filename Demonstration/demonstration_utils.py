@@ -154,6 +154,8 @@ def compute_phi(events, path_output):
     events = events.rename(columns={'x_i':'y_i', 'y_i':'x_i', 'x_j':'y_j', 'y_j':'x_j',
                                     'vx_i':'vy_i', 'vy_i':'vx_i', 'vx_j':'vy_j', 'vy_j':'vx_j',
                                     'hx_i':'hy_i', 'hy_i':'hx_i', 'hx_j':'hy_j', 'hy_j':'hx_j'})
+    events['psi_i'] = coortrans.angle(1, 0, events['hx_i'], events['hy_i'])
+    events['psi_j'] = coortrans.angle(1, 0, events['hx_j'], events['hy_j'])
 
     ## Transform coordinates and formulate input data
     events['delta_v'] = np.sqrt((events['vx_i']-events['vx_j'])**2 + (events['vy_i']-events['vy_j'])**2)
@@ -383,10 +385,10 @@ def plot_warning(warning_ttc, warning_drac, warning_psd, warning_unified):
 
     radius = np.sqrt((1-optimal_point['true positive rate'])**2+optimal_point['false positive rate']**2).iloc[0]
     axes[0].add_patch(plt.Circle((0, 1), radius, color=cmap(0.), fill=False, clip_on=True, lw=0.25, zorder=-5))
-    ax_focus = axes[0].inset_axes([0.47, 0.1, 0.5, 0.5], xlim=(-0.01, 0.11), ylim=(0.89, 1.01))
+    ax_focus = axes[0].inset_axes([0.41, 0.1, 0.55, 0.55], xlim=(-0.01, 0.16), ylim=(0.84, 1.01))
     ax_focus.tick_params(axis='both', labelsize=8, pad=1)
-    ax_focus.set_yticks([0.90, 0.95, 1.0])
-    ax_focus.set_xticks([0, 0.05, 0.1])
+    ax_focus.set_yticks([0.85, 0.90, 0.95, 1.0])
+    ax_focus.set_xticks([0, 0.05, 0.10, 0.15])
     for statistics_, optimal_, color, ls in zip(statistics_list, optimal_list, color_list, ls_list):
         statistics_ = statistics_.reset_index()
         optimal_point = statistics_[statistics_['threshold']==optimal_['threshold'].iloc[0]]

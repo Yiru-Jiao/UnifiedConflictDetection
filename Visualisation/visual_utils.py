@@ -88,7 +88,7 @@ def draw_vehs_ij(ax, vehs_ij, draw_j=True, arrow=True):
     return ax
 
 
-def viual_100Car(t, df, df_view_i, df_relative, interaction_situation, model, likelihood, device, n, conflict_start, conflict_end):
+def visual_100Car(t, df, df_view_i, df_relative, interaction_situation, model, likelihood, device, n, conflict_start, conflict_end):
     fig = plt.figure(figsize=(7.5,2.7))
     gs = fig.add_gridspec(24, 29, wspace=1)
     cmap = mpl.cm.plasma
@@ -230,6 +230,8 @@ def viual_100Car(t, df, df_view_i, df_relative, interaction_situation, model, li
         ax.set_xlim(-37, 37)
         ax.set_ylim(-50, 50)
         ax.set_aspect('equal')
+        ax.invert_xaxis() # x-axis is inverted to align with the coordinate system in highD
+
     ax_conflict.tick_params(axis='y', which='major', pad=12)
     for tick in ax_conflict.yaxis.get_majorticklabels():
         tick.set_horizontalalignment('center')
@@ -364,6 +366,7 @@ def visual_highD(lane_markings, frameid, veh_i, veh_j, df, df_view_i, other_vehs
     
     ax_interaction.set_xlim(-35, 35)
     ax_interaction.set_ylim(-60, 60)
+    ax_interaction.invert_xaxis() # x-axis is inverted to align with the coordinate system in highD
     ax_interaction.set_aspect('equal')
     cax_interaction = fig.add_subplot(gs[-2:,16:22])
     cbr_interaction = fig.colorbar(im, cax=cax_interaction, orientation='horizontal')

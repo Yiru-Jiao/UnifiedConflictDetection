@@ -62,8 +62,8 @@ likelihood = pipeline.likelihood.to(device)
 
 
 ## Set thresholds based on the previous experiments
-ttc_threshold = 4.0
-nhat_threshold = 25
+ttc_threshold = 4.2
+nhat_threshold = 17
 
 ## Compute on the highD dataset
 metadatafiles =  sorted(glob.glob(path_raw + 'highD/RecordingMetadata/*.csv'))

@@ -7,7 +7,6 @@ Note that this matching is very basic and may be incorrect due to factors such a
 
 import pandas as pd
 import numpy as np
-import utils.TwoDimTTC as TwoDimTTC
 
 # Define file paths
 path_cleaned = './Data/RawData/100Car/CleanedData/'
@@ -109,9 +108,7 @@ for crash_type in ['Crash', 'NearCrash']:
             df['vx_j'] = df['speed_j'] * df['hx_j']
             df['vy_j'] = df['speed_j'] * df['hy_j']
             df = move_to_center(df)
-            df['s_box'] = TwoDimTTC.CurrentD(df, 'values')
-            df.loc[df['s_box'] < 1e-6, 's_box'] = 1e-6
-            meta.loc[trip_id, 'moment'] = df.loc[df[df['event']]['s_box'].idxmin(), 'time']
+            meta.loc[trip_id, 'moment'] = df[df['event']]['time'].max()
 
             duration_before_event = df[df['event']]['time'].min() - df['time'].min()
             # make sure there are at least 6 seconds movement before the event (3s safe and 3s dangerous)
@@ -124,7 +121,6 @@ for crash_type in ['Crash', 'NearCrash']:
 
     events = pd.concat(events).sort_values(['trip_id', 'time']).reset_index(drop=True)
     events.to_hdf(path_matched + 'HundredCar_' + crash_type + 'es.h5', key='data')
-    print('Minimum net distance:', events['s_box'].min())
 
     meta = meta.loc[events['trip_id'].unique()]
     meta.to_csv(path_matched + 'HundredCar_metadata_' + crash_type + 'es.csv')

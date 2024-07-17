@@ -12,8 +12,8 @@ path_input = './Data/InputData/'
 path_output = './Data/OutputData/'
 
 # With optimal threshold
-## TTC*=4.0, DRAC*=0.45, PSD*=0.8, Unified*=17
-thresholds = [4.0, 0.45, 0.8, 17]
+## TTC*=4.2, DRAC*=0.45, PSD*=0.52, Unified*=17
+thresholds = [4.2, 0.45, 0.52, 17]
 
 ## Load data
 events = pd.read_hdf(path_input+'100Car/HundredCar_NearCrashes.h5', key='data')

@@ -69,7 +69,7 @@ for crash_type in ['Crash', 'NearCrash']:
         meta.loc[trip_id, 'event start time'] = df_ego.loc[meta_trip['event start'], 'time']
         meta.loc[trip_id, 'event end time'] = df_ego.loc[meta_trip['event end'], 'time']
         df_ego['event'] = False
-        df_ego.loc[meta_trip['event start']:meta_trip['event end'], 'event'] = True
+        df_ego.loc[meta_trip['event start']:meta_trip['event end']+1, 'event'] = True
 
         merged = df_ego[df_ego['event']].merge(df_sur, on='time', suffixes=('_ego', '_sur'))
         forward = merged[merged['forward']].groupby('time')['range'].idxmin()
@@ -108,13 +108,13 @@ for crash_type in ['Crash', 'NearCrash']:
             df['vx_j'] = df['speed_j'] * df['hx_j']
             df['vy_j'] = df['speed_j'] * df['hy_j']
             df = move_to_center(df)
-            meta.loc[trip_id, 'moment'] = df[df['event']]['time'].max()
+            meta.loc[trip_id, 'moment'] = df.loc[df[df['event']]['range'].idxmin(), 'time']
 
             duration_before_event = df[df['event']]['time'].min() - df['time'].min()
             # make sure there are at least 6 seconds movement before the event (3s safe and 3s dangerous)
             if (duration_before_event >= 6):
                 # make sure the ego vehicle is not hard-braking in the first 3 seconds
-                if (np.all(df[df['time'] <= (df['time'].min() + 3.)]['acc_i'] > -1.5)):
+                if (np.all(df[df['time']<(df['time'].min()+3.)]['acc_i'] > -1.5)):
                     # make sure the vehicles move faster than 3 m/s (i.e., not in congestion) in the first 3 seconds
                     if np.all(df[['speed_i', 'speed_j']].iloc[0] > 3.):
                         events.append(df)

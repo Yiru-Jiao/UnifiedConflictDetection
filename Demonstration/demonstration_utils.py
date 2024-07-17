@@ -10,6 +10,9 @@ from matplotlib import pyplot as plt
 from scipy.special import erf
 sys.path.append('./')
 import DataProcessing.utils.TwoDimTTC as TwoDimTTC
+from DataProcessing.utils.coortrans import coortrans
+coortrans = coortrans()
+from GaussianProcessRegression.training_utils import *
 
 
 def lognormal_cdf(x, mu, sigma):
@@ -124,6 +127,72 @@ def mfam(mu, sigma, n, smax=100, alpha=0.5):
     weighted_sum = alpha*pma+(1-alpha)*pfa
 
     return range_g[indices,weighted_sum.argmin(axis=1)]
+
+
+def compute_phi(events, path_output):
+    """
+    Compute mu and sigma using a trained model.
+
+    Args:
+        events (pandas.DataFrame): Input data containing event information.
+        path_output (str): Path to the output directory.
+
+    Returns:
+        pandas.DataFrame: proximity_phi containing trip_id, time, mu, and sigma.
+
+    """
+    # Check if CUDA is available
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    print(f'Using {device} device')
+
+    if device=='cpu':
+        num_threads = torch.get_num_threads()
+        print(f'Number of available threads: {num_threads}')
+        torch.set_num_threads(round(num_threads/2))
+
+    # Mirror the coordinates as the model is trained on highD where the y-axis points downwards
+    events = events.rename(columns={'x_i':'y_i', 'y_i':'x_i', 'x_j':'y_j', 'y_j':'x_j',
+                                    'vx_i':'vy_i', 'vy_i':'vx_i', 'vx_j':'vy_j', 'vy_j':'vx_j',
+                                    'hx_i':'hy_i', 'hy_i':'hx_i', 'hx_j':'hy_j', 'hy_j':'hx_j'})
+
+    ## Transform coordinates and formulate input data
+    events['delta_v'] = np.sqrt((events['vx_i']-events['vx_j'])**2 + (events['vy_i']-events['vy_j'])**2)
+    events['delta_v2'] = events['delta_v']**2
+    events['speed_i2'] = events['speed_i']**2
+    events['speed_j2'] = events['speed_j']**2
+    features = ['length_i','length_j','hx_j','hy_j','delta_v','delta_v2','speed_i2','speed_j2','acc_i','rho']
+    events_view_i = coortrans.transform_coor(events, view='i')
+    heading_j = events_view_i[['trip_id','time','hx_j','hy_j']]
+    events_relative = coortrans.transform_coor(events, view='relative')
+    rho = coortrans.angle(1, 0, events_relative['x_j'], events_relative['y_j']).reset_index().rename(columns={0:'rho'})
+    rho[['trip_id','time']] = events_relative[['trip_id','time']]
+    interaction_situation = events.drop(columns=['hx_j','hy_j']).merge(heading_j, on=['trip_id','time']).merge(rho, on=['trip_id','time'])
+    interaction_situation = interaction_situation[features+['trip_id','time']]
+
+    ## Load trained model
+    beta = 5
+    model_idx = 52
+    num_inducing_points = 100
+    pipeline = train_val_test(device, num_inducing_points)
+    pipeline.model.load_state_dict(torch.load(path_output+f'trained_models/highD_LC/beta={beta}/model_{model_idx}epoch.pth', map_location=torch.device(device)))
+    pipeline.likelihood.load_state_dict(torch.load(path_output+f'trained_models/highD_LC/beta={beta}/likelihood_{model_idx}epoch.pth', map_location=torch.device(device)))
+    pipeline.model.eval()
+    pipeline.likelihood.eval()
+    model = pipeline.model.to(device)
+    likelihood = pipeline.likelihood.to(device)
+
+    ## Compute mu_list, sigma_list
+    with torch.no_grad(), gpytorch.settings.fast_pred_var():
+        f_dist = model(torch.Tensor(interaction_situation[features].values).to(device))
+        y_dist = likelihood(f_dist)
+        mu_list, sigma_list = y_dist.mean.cpu().numpy(), y_dist.variance.sqrt().cpu().numpy()
+
+    proximity_phi = pd.DataFrame({'trip_id': interaction_situation['trip_id'].values,
+                                  'time': interaction_situation['time'].values,
+                                  'mu': mu_list,
+                                  'sigma': sigma_list})
+
+    return proximity_phi
 
 
 def determine_conflicts(data, conflict_indicator, parameters):

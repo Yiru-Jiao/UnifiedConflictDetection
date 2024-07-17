@@ -52,6 +52,13 @@ events = pd.read_hdf(path_output + 'conflict_probability/optimal_warning/NearCra
 meta = pd.read_csv(path_output + 'conflict_probability/optimal_warning/Unified_NearCrashes.csv').set_index('trip_id')
 proximity_phi = pd.read_csv(path_output+'conflict_probability/proximity_phi.csv')
 
+# Mirror event coordinates as the model is trained on highD where the y-axis points downwards
+events = events.rename(columns={'x_i':'y_i', 'y_i':'x_i', 'x_j':'y_j', 'y_j':'x_j',
+                                'vx_i':'vy_i', 'vy_i':'vx_i', 'vx_j':'vy_j', 'vy_j':'vx_j',
+                                'hx_i':'hy_i', 'hy_i':'hx_i', 'hx_j':'hy_j', 'hy_j':'hx_j'})
+events['psi_i'] = coortrans.angle(1, 0, events['hx_i'], events['hy_i'])
+events['psi_j'] = coortrans.angle(1, 0, events['hx_j'], events['hy_j'])
+
 folder_list = ['unified1_ttc1_drac0', 
                'unified1_ttc0_drac1',
                'unified1_ttc0_drac0',
@@ -99,7 +106,7 @@ for idx, folder in enumerate(folder_list):
         interaction_situation = interaction_situation[features+['time']].set_index('time')
 
         for t in tqdm(df['time'], desc=f'Trip {trip_id}'):
-            fig = viual_100Car(t, df, df_view_i, df_relative, interaction_situation, 
+            fig = visual_100Car(t, df, df_view_i, df_relative, interaction_situation, 
                                model, likelihood, device, n, conflict_start, conflict_end)
             fig.savefig(save_dir+f'frame_{int(t*100)}.png', bbox_inches='tight', dpi=600)
             plt.close(fig)

@@ -117,7 +117,7 @@ for crash_type in ['Crash', 'NearCrash']:
             # make sure there are at least 6 seconds movement before the event (3s safe and 3s dangerous)
             if (duration_before_event >= 6):
                 # make sure the ego vehicle is not hard-braking in the first 3 seconds
-                if (np.all(df[df['time'] <= (df['time'].min() + 3.)]['acc_i'] > -1.)):
+                if (np.all(df[df['time'] <= (df['time'].min() + 3.)]['acc_i'] > -1.5)):
                     # make sure the vehicles move faster than 3 m/s (i.e., not in congestion) in the first 3 seconds
                     if np.all(df[['speed_i', 'speed_j']].iloc[0] > 3.):
                         events.append(df)

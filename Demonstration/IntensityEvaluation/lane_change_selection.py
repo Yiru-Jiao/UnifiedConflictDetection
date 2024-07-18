@@ -91,7 +91,9 @@ for loc_id in range(6, 0, -1):
                                          [veh['frame_id'].max()]))
         for frame_start, frame_end in zip(frame_segments[:-1], frame_segments[1:]):
             veh_i = data_lc.loc[lc_veh_id]
-            veh_i = veh_i[veh_i['frame_id'].between(frame_start, frame_end)]
+            veh_i = veh_i[veh_i['frame_id'].between(frame_start, frame_end, inclusive='neither')]
+            # locate the start and end of the lane change
+            lc_start, lc_end = locate_lane_change(veh_i['frame_id'].values, veh_i['y'].values, lane_markings, veh_i['width'].mean())
 
             preceding_vehs = veh_i[veh_i['precedingId']>0]['precedingId'].unique()
             following_vehs = veh_i[veh_i['followingId']>0]['followingId'].unique()
@@ -99,7 +101,7 @@ for loc_id in range(6, 0, -1):
                 # Skip as the vehicle changed lane without interacting with other vehicles
                 continue
             int_veh_list = np.concatenate([preceding_vehs, following_vehs])
-            interaction_cases.append([loc_id, lc_id, lc_veh_id, frame_start, frame_end, ', '.join(int_veh_list.astype(str).tolist())])
+            interaction_cases.append([loc_id, lc_id, lc_veh_id, frame_start, frame_end, lc_start, lc_end])
             lc_id += 1
 
             # Note: this combination may involve repeated pairs of vehicles, which we will filter in the next step
@@ -136,11 +138,8 @@ for loc_id in range(6, 0, -1):
                 # this happens when the lognormal_cdf is close to 1, which means the intensity is very low
                 # the computated n_hat is 0 and still valid
                 df.loc[df['n_hat']<1, 'n_hat'] = 1
-
-                # locate the start and end of the lane change
-                frame_start, frame_end = locate_lane_change(veh_i['frame_id'].values, veh_i['y'].values, lane_markings, veh_i['width'].mean())
                 
-                ttc = df[(df['frame_id']>=frame_start)&(df['frame_id']<=frame_end)]['TTC']
+                ttc = df[(df['frame_id']>=lc_start)&(df['frame_id']<=lc_end)]['TTC']
                 avg_ttc = ttc[ttc<ttc_threshold].mean()
                 # check if there is a continuous period where TTC is below the threshold
                 continuous_true = ''.join((ttc<ttc_threshold).values.astype(int).astype(str)).split('0')
@@ -149,7 +148,7 @@ for loc_id in range(6, 0, -1):
                 if not ttc:
                     avg_ttc = np.nan
                 
-                unified = df[(df['frame_id']>=frame_start)&(df['frame_id']<=frame_end)]['n_hat']
+                unified = df[(df['frame_id']>=lc_start)&(df['frame_id']<=lc_end)]['n_hat']
                 avg_unified = np.log10(unified[unified>nhat_threshold]).mean()
                 # check if there is a continuous period where the unified metric is above the threshold
                 continuous_true = ''.join((unified>nhat_threshold).values.astype(int).astype(str)).split('0')
@@ -169,7 +168,7 @@ for loc_id in range(6, 0, -1):
                     conflict_count += 1
                     progress_bar.set_postfix({'Cases in total': conflict_count})
 
-interaction_cases = pd.DataFrame(interaction_cases, columns=['location', 'lc_id', 'veh_id_i', 'frame_start', 'frame_end', 'int_veh_ids'])
+interaction_cases = pd.DataFrame(interaction_cases, columns=['location', 'lc_id', 'veh_id_i', 'frame_start', 'frame_end', 'lc_start', 'lc_end'])
 interaction_cases.to_csv(path_output + 'intensity_evaluation/highD_interactive_LC.csv', index=False)
 
 conflict_cases = pd.DataFrame(conflict_cases, columns=['location', 'lc_id', 'conflict_id', 'veh_id_i', 'veh_id_j', 'TTC', 'Unified', 'avg_TTC', 'avg_intensity'])

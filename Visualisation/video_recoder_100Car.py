@@ -59,19 +59,18 @@ events = events.rename(columns={'x_i':'y_i', 'y_i':'x_i', 'x_j':'y_j', 'y_j':'x_
 events['psi_i'] = coortrans.angle(1, 0, events['hx_i'], events['hy_i'])
 events['psi_j'] = coortrans.angle(1, 0, events['hx_j'], events['hy_j'])
 
+# Trips to visualise
 folder_list = ['unified1_ttc1_drac0', 
-               'unified1_ttc0_drac1',
                'unified1_ttc0_drac0',
                'unified0_ttc1_drac1',
                'unified0_ttc0_drac1',
                'unified_false_warning']
-trip_list = [[8622,9101], 
-             [8702], 
-             [8463,8810,8854],
-             [8793],
-             [8332],
-             [8395,8460,8463,8565,9044]]
-n = 13 # optimal threshold for the unified metric
+trip_list = [[8622,8854,9101], 
+             [8463,8810],
+             [8761],
+             [8332,8702],
+             [8395,8463,9044]]
+n = 17 # optimal threshold for the unified metric
 
 
 for idx, folder in enumerate(folder_list):

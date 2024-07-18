@@ -9,7 +9,6 @@ import glob
 from tqdm.auto import tqdm
 import numpy as np
 import pandas as pd
-from scipy.signal import savgol_filter
 sys.path.append('./')
 import DataProcessing.utils.TwoDimTTC as TwoDimTTC
 from DataProcessing.utils.coortrans import coortrans
@@ -31,21 +30,6 @@ path_raw = './Data/RawData/'
 path_processed = './Data/ProcessedData/'
 path_input = './Data/InputData/'
 path_output = './Data/OutputData/'
-
-
-def ricker_wavelet_gradient(x, a=10):
-    """
-    Calculate the gradient of smoothed Ricker wavelet function
-
-    Parameters:
-    x (float): The lateral velocities at which to evaluate the wavelet.
-    a (float): The width parameter of the wavelet. Default is 10Hz as we have downsampled highD data to 10fps.
-    """
-    coefficient = 2/(np.sqrt(3*a)*(np.pi**0.25))
-    ricker_wavelet = coefficient * (1 - (x/a)**2) * np.exp(-0.5*(x/a)**2)
-    smoothed_wavelet = savgol_filter(ricker_wavelet, 30, 3)
-    gradient = np.gradient(smoothed_wavelet)
-    return gradient
 
 
 ## Load the trained model
@@ -95,21 +79,24 @@ for loc_id in range(6, 0, -1):
     for i in progress_bar:
         lc_veh_id = lc_veh_ids[i]
         veh = data_lc.loc[lc_veh_id]
+
+        # Get the lane markings
+        lane_markings = [float(y) for lane in ['lowerLaneMarkings','upperLaneMarkings'] for y in metadata.loc[lc_veh_id//10000][lane].split(';')]
+        lane_markings = np.sort(lane_markings)
+
         # There may be multiple lane changes in one trajectory
         lane_change_points = veh[abs(veh['laneId'].diff())>0]['frame_id'].values
         frame_segments = np.concatenate(([veh['frame_id'].min()], 
-                                        (lane_change_points[1:] + lane_change_points[:-1])/2, 
-                                        [veh['frame_id'].max()]))
+                                         (lane_change_points[1:] + lane_change_points[:-1])/2, 
+                                         [veh['frame_id'].max()]))
         for frame_start, frame_end in zip(frame_segments[:-1], frame_segments[1:]):
             veh_i = data_lc.loc[lc_veh_id]
             veh_i = veh_i[veh_i['frame_id'].between(frame_start, frame_end)]
-            if len(veh_i)<31:
-                continue
 
             preceding_vehs = veh_i[veh_i['precedingId']>0]['precedingId'].unique()
             following_vehs = veh_i[veh_i['followingId']>0]['followingId'].unique()
             if len(preceding_vehs)==0 or len(following_vehs)==0:
-                # print('Skipping visualisition as the vehicle changed lane without interacting with other vehicles')
+                # Skip as the vehicle changed lane without interacting with other vehicles
                 continue
             int_veh_list = np.concatenate([preceding_vehs, following_vehs])
             interaction_cases.append([loc_id, lc_id, lc_veh_id, frame_start, frame_end, ', '.join(int_veh_list.astype(str).tolist())])
@@ -150,19 +137,27 @@ for loc_id in range(6, 0, -1):
                 # the computated n_hat is 0 and still valid
                 df.loc[df['n_hat']<1, 'n_hat'] = 1
 
-                wavelet = ricker_wavelet_gradient(veh_i['vy']) # use ricker wavelet to determine the start and end of the lane change
-                frame_1 = veh_i.iloc[wavelet.argmin()]['frame_id']
-                frame_2 = veh_i.iloc[wavelet.argmax()]['frame_id']
-                if frame_1 > frame_2:
-                    frame_1, frame_2 = frame_2, frame_1
-                ttc = df[(df['frame_id']>frame_1)&(df['frame_id']<frame_2)]['TTC']
-                unified = df[(df['frame_id']>frame_1)&(df['frame_id']<frame_2)]['n_hat']
+                # locate the start and end of the lane change
+                frame_start, frame_end = locate_lane_change(veh_i['frame_id'].values, veh_i['y'].values, lane_markings, veh_i['width'].mean())
+                
+                ttc = df[(df['frame_id']>=frame_start)&(df['frame_id']<=frame_end)]['TTC']
                 avg_ttc = ttc[ttc<ttc_threshold].mean()
+                # check if there is a continuous period where TTC is below the threshold
+                continuous_true = ''.join((ttc<ttc_threshold).values.astype(int).astype(str)).split('0')
+                max_length_ttc = len(max(continuous_true, key=len))
+                ttc = max_length_ttc >= 10
+                if not ttc:
+                    avg_ttc = np.nan
+                
+                unified = df[(df['frame_id']>=frame_start)&(df['frame_id']<=frame_end)]['n_hat']
                 avg_unified = np.log10(unified[unified>nhat_threshold]).mean()
-                ttc = len(ttc[ttc<ttc_threshold])>5
-                unified = len(unified[unified>nhat_threshold])>5
+                # check if there is a continuous period where the unified metric is above the threshold
+                continuous_true = ''.join((unified>nhat_threshold).values.astype(int).astype(str)).split('0')
+                max_length_unified = len(max(continuous_true, key=len))
+                unified = max_length_unified >= 10
                 if not unified:
-                    avg_unified = 0.
+                    avg_unified = np.nan
+
                 if ttc or unified:
                     df['location'] = loc_id
                     df['lc_id'] = lc_id-1

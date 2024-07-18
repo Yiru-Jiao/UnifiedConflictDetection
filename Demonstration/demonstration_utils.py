@@ -125,9 +125,10 @@ def locate_lane_change(reference, lateral_position, lane_markings, veh_width, re
     larger_position = lane_markings[np.argsort(abs(lane_markings-lateral_position[-1]))][:2].mean()
     larger_position = larger_position - veh_width / 3
 
+    # transform the lateral position to a range of [-1, 1] and
+    # use a customed wavelet transformation to locate the start and end points
     lateral_position = (lateral_position - (smaller_position + larger_position) / 2) / (larger_position - smaller_position) * 2
     transformed = (-lateral_position - lateral_position ** 3) * np.exp(-lateral_position ** 2)
-
     ref_start = reference[lateral_derivative >= 0][transformed[lateral_derivative >= 0].argmax()]
     ref_end = reference[lateral_derivative >= 0][transformed[lateral_derivative >= 0].argmin()]
 

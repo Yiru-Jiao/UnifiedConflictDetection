@@ -239,6 +239,55 @@ def visual_100Car(t, df, df_view_i, df_relative, interaction_situation, model, l
     return fig
 
 
+def locate_lane_change(reference, lateral_position, lane_markings, veh_width, return_position=False):
+    '''
+    Identifies the start and end points of a lane change based on the given reference and lateral position.
+
+    Parameters:
+        reference (array-like): Monotonically increasing reference values, such as longitudinal position or time.
+        lateral_position (array-like): Lateral position values.
+        lane_markings (array-like): Lateral position values of the lane markings.
+        veh_width (float): Width of the vehicle.
+        return_position (bool, optional): If True, also returns the start and end positions of the lane change. Default is False.
+
+    Returns:
+        tuple: A tuple containing the start and end points of the lane change. If return_position is True, the tuple also includes the start and end positions.
+
+    Notes:
+        - The reference array should be monotonically increasing.
+    '''
+
+    # make a copy of the lateral position array
+    input_lateral_position = lateral_position.copy()
+
+    # make sure the first lateral position is smaller than the last
+    if lateral_position[-1] < lateral_position[0]:
+        lane_markings = lateral_position.max() - lane_markings
+        lateral_position = lateral_position.max() - lateral_position
+
+    # calculate the derivative of the lateral position, derivative >= 0 is necessary for lane change
+    lateral_derivative = np.gradient(lateral_position)
+
+    # start to count a lane change when the vehicle deviates more than 1/3 of its width from the lane center
+    smaller_position = lane_markings[np.argsort(abs(lane_markings-lateral_position[0]))][:2].mean()
+    smaller_position = smaller_position + veh_width / 3
+    larger_position = lane_markings[np.argsort(abs(lane_markings-lateral_position[-1]))][:2].mean()
+    larger_position = larger_position - veh_width / 3
+
+    lateral_position = (lateral_position - (smaller_position + larger_position) / 2) / (larger_position - smaller_position) * 2
+    transformed = (-lateral_position - lateral_position ** 3) * np.exp(-lateral_position ** 2)
+
+    ref_start = reference[lateral_derivative >= 0][transformed[lateral_derivative >= 0].argmax()]
+    ref_end = reference[lateral_derivative >= 0][transformed[lateral_derivative >= 0].argmin()]
+
+    if return_position:
+        pos_start = input_lateral_position[reference <= ref_start].max()
+        pos_end = input_lateral_position[reference >= ref_end].min()
+        return ref_start, ref_end, pos_start, pos_end
+    else:
+        return ref_start, ref_end
+
+
 def visual_highD(lane_markings, frameid, veh_i, veh_j, df, df_view_i, other_vehs, other_vehs_view_i, interaction_situation, model, likelihood, device, frame_1, frame_2):
     fig = plt.figure(figsize=(7.5,4))
     gs = fig.add_gridspec(28, 30, wspace=1)

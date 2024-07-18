@@ -90,43 +90,53 @@ def extreme_pdf(x, mu, sigma, n=10, rescale=True):
     return p
 
 
-def mfam(mu, sigma, n, smax=100, alpha=0.5):
+def locate_lane_change(reference, lateral_position, lane_markings, veh_width, return_position=False):
     '''
-    Apply the threshold selection method based on minimising false alarms and missed alarms (MFAM).
+    Identifies the start and end points of a lane change based on the given reference and lateral position.
 
     Parameters:
-    - mu: Mean of the extreme value distribution.
-    - sigma: Standard deviation of the extreme value distribution.
-    - n: Number of trials, i.e., level of the extreme events.
-    - smax: Assumed maximum value of s.
-    - alpha: Weighting factor for the probability of missed alarms. 
-             If alpha==0, the threshold aims to minimise false alarms;
-             if alpha==1, the threshold aims to minimise missed alarms.
+        reference (array-like): Monotonically increasing reference values, such as longitudinal position or time.
+        lateral_position (array-like): Lateral position values.
+        lane_markings (array-like): Lateral position values of the lane markings.
+        veh_width (float): Width of the vehicle.
+        return_position (bool, optional): If True, also returns the start and end positions of the lane change. Default is False.
 
     Returns:
-    - Threshold values that minimise the weighted sum of false alarms and missed alarms.
+        tuple: A tuple containing the start and end points of the lane change. If return_position is True, the tuple also includes the start and end positions.
+
+    Notes:
+        - The reference array should be monotonically increasing.
     '''
-    range_s = np.arange(1, 200, 1)
-    indices = np.arange(len(mu))
-    range_s, meshed_indices = np.meshgrid(range_s, indices)
 
-    density_s = lognormal_pdf(range_s, mu[meshed_indices], sigma[meshed_indices])
-    smax = max(smax, range_s[indices,density_s.argmax(axis=1)].max())
+    # make a copy of the lateral position array
+    input_lateral_position = lateral_position.copy()
 
-    range_g = np.arange(0.01, smax, 0.01)
-    range_g, meshed_indices = np.meshgrid(range_g, indices)
+    # make sure the first lateral position is smaller than the last
+    if lateral_position[-1] < lateral_position[0]:
+        lane_markings = lateral_position.max() - lane_markings
+        lateral_position = lateral_position.max() - lateral_position
 
-    int_smax_f = 1. 
-    int_smax_g = 1. 
-    int_s_g = 1-extreme_cdf(range_g,mu[meshed_indices],sigma[meshed_indices],n)
-    int_s_f = lognormal_cdf(range_g,mu[meshed_indices],sigma[meshed_indices])
-    k = 1/(100+n)
+    # calculate the derivative of the lateral position, derivative >= 0 is necessary for lane change
+    lateral_derivative = np.gradient(lateral_position)
 
-    pma = int_smax_g - int_s_g
-    pfa = (int_s_f - k*int_s_g)/(int_smax_f - k*int_smax_g)
-    weighted_sum = alpha*pma+(1-alpha)*pfa
+    # start to count a lane change when the vehicle deviates more than 1/3 of its width from the lane center
+    smaller_position = lane_markings[np.argsort(abs(lane_markings-lateral_position[0]))][:2].mean()
+    smaller_position = smaller_position + veh_width / 3
+    larger_position = lane_markings[np.argsort(abs(lane_markings-lateral_position[-1]))][:2].mean()
+    larger_position = larger_position - veh_width / 3
 
-    return range_g[indices,weighted_sum.argmin(axis=1)]
+    lateral_position = (lateral_position - (smaller_position + larger_position) / 2) / (larger_position - smaller_position) * 2
+    transformed = (-lateral_position - lateral_position ** 3) * np.exp(-lateral_position ** 2)
+
+    ref_start = reference[lateral_derivative >= 0][transformed[lateral_derivative >= 0].argmax()]
+    ref_end = reference[lateral_derivative >= 0][transformed[lateral_derivative >= 0].argmin()]
+
+    if return_position:
+        pos_start = input_lateral_position[reference <= ref_start].max()
+        pos_end = input_lateral_position[reference >= ref_end].min()
+        return ref_start, ref_end, pos_start, pos_end
+    else:
+        return ref_start, ref_end
 
 
 def compute_phi(events, path_output):

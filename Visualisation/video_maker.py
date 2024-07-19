@@ -51,17 +51,15 @@ for idx in tqdm(summary2vis.index, desc='highD'):
 # video making 100Car
 
 folder_list = ['unified1_ttc1_drac0', 
-               'unified1_ttc0_drac1',
                'unified1_ttc0_drac0',
                'unified0_ttc1_drac1',
                'unified0_ttc0_drac1',
                'unified_false_warning']
-trip_list = [[8622,9101], 
-             [8702], 
-             [8463,8810,8854],
-             [8793],
-             [8332],
-             [8395,8460,8463,8565,9044]]
+trip_list = [[8622,8854,9101], 
+             [8463,8810],
+             [8761],
+             [8332,8702],
+             [8395,8463,9044]]
 
 for idx, folder in tqdm(enumerate(folder_list), desc='100Car', total=len(folder_list)):
     trip_id_list = trip_list[idx]

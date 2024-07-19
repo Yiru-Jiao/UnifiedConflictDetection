@@ -91,6 +91,8 @@ filelists = sorted(glob.glob(image_dir+'*.png'), key=lambda x: int(x[-10:-4]))
 
 img = cv2.imread(filelists[0])
 height, width, layers = img.shape
+if not os.path.exists(path_figure+'Figure9/'):
+    os.makedirs(path_figure+'Figure9/')
 video_dir = path_figure + 'Figure9/Figure9.mp4'
 
 out = cv2.VideoWriter(video_dir, cv2.VideoWriter_fourcc(*'mp4v'), 10, (width, height))

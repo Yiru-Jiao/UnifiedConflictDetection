@@ -103,6 +103,8 @@ for file in filelists:
     img = cv2.resize(cv2.imread(file), None, fx=0.25, fy=0.25)
     frames.append(img)
 
+if not os.path.exists(path_figure + 'Figure9/'):
+    os.makedirs(path_figure + 'Figure9/')
 gif_dir = path_figure + 'Figure9/Figure9.gif'
 
 with imageio.get_writer(gif_dir, mode='I', duration=0.1, loop=0) as writer:

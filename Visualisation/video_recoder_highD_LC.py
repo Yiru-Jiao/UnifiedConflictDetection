@@ -8,7 +8,6 @@ import glob
 from tqdm.auto import tqdm
 import numpy as np
 import pandas as pd
-from scipy.signal import savgol_filter
 sys.path.append('./')
 import DataProcessing.utils.TwoDimTTC as TwoDimTTC
 from DataProcessing.utils.coortrans import coortrans
@@ -29,21 +28,6 @@ if device=='cpu':
     num_threads = torch.get_num_threads()
     print(f'Number of available threads: {num_threads}')
     torch.set_num_threads(round(num_threads/2))
-
-# Define the wavelet
-def ricker_wavelet_gradient(x, a=10):
-    """
-    Calculate the gradient of smoothed Ricker wavelet function
-
-    Parameters:
-    x (float): The lateral velocities at which to evaluate the wavelet.
-    a (float): The width parameter of the wavelet. Default is 10Hz as we have downsampled highD data to 10fps.
-    """
-    coefficient = 2/(np.sqrt(3*a)*(np.pi**0.25))
-    ricker_wavelet = coefficient * (1 - (x/a)**2) * np.exp(-0.5*(x/a)**2)
-    smoothed_wavelet = savgol_filter(ricker_wavelet, 30, 3)
-    gradient = np.gradient(smoothed_wavelet)
-    return gradient
 
 
 # Load trained model 
@@ -133,15 +117,11 @@ for idx in summary2vis.index:
     df['n_hat'] = np.log(0.5)/np.log(1-lognormal_cdf(df['s_centroid'], df['mu'], df['sigma']))
     df.loc[df['n_hat']<1, 'n_hat'] = 1
 
-    wavelet = ricker_wavelet_gradient(abs(veh_i['vy']))
-    frame_1 = veh_i.iloc[wavelet.argmin()]['frame_id']
-    frame_2 = veh_i.iloc[wavelet.argmax()]['frame_id']
-    if frame_1 > frame_2:
-        frame_1, frame_2 = frame_2, frame_1
-    df = df[(df['frame_id']>=frame_1-30)&(df['frame_id']<=frame_2+30)]
+    lc_start, lc_end = locate_lane_change(veh_i['frame_id'].values, veh_i['y'].values, lane_markings, veh_i['width'].mean())
+    df = df[(df['frame_id']>=lc_start-30)&(df['frame_id']<=lc_end+30)]
 
     for frameid in tqdm(df['frame_id'].values, desc=f'{veh_id_i}_{veh_id_j}'):
         fig = visual_highD(lane_markings, frameid, veh_i, veh_j, df, df_view_i, other_vehs, other_vehs_view_i, 
-                           interaction_situation, model, likelihood, device, frame_1, frame_2)
+                           interaction_situation, model, likelihood, device, lc_start, lc_end)
         fig.savefig(save_dir+f'frame_{frameid}.png', bbox_inches='tight', dpi=600)
         plt.close(fig)

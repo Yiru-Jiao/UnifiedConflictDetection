@@ -373,6 +373,10 @@ def plot_warning(warning_ttc, warning_drac, warning_psd, warning_unified):
     statistics_unified, optimal_unified, unified_selected = warning_unified
 
     fig, axes = plt.subplots(1, 3, figsize=(7.5, 2.2), constrained_layout=True)
+    ax_focus = axes[0].inset_axes([0.48, 0.11, 0.5, 0.5], xlim=(-1, 16), ylim=(84, 101))
+    ax_focus.tick_params(axis='both', labelsize=8, pad=1)
+    ax_focus.set_yticks([85, 90, 95, 100])
+    ax_focus.set_xticks([0, 5, 10, 15])
     cmap = mpl.cm.plasma
     
     xticks = []
@@ -382,37 +386,20 @@ def plot_warning(warning_ttc, warning_drac, warning_psd, warning_unified):
     ls_list = ['s:','p-.','H--','o-']
     for statistics_, optimal_, color, ls in zip(statistics_list, optimal_list, color_list, ls_list):
         statistics_ = statistics_.reset_index()
+        statistics_[['true positive rate','false positive rate']] = statistics_[['true positive rate','false positive rate']]*100
         optimal_point = statistics_[statistics_['threshold']==optimal_['threshold'].iloc[0]]
         statistics_ = statistics_[['false positive rate','true positive rate']].drop_duplicates()
-        axes[0].plot(statistics_['false positive rate'], statistics_['true positive rate'], 
-                    ls, label=' ', color=color, ms=2, mfc='none', mew=0.5, lw=0.75, zorder=10)
-        axes[0].plot(optimal_point['false positive rate'], optimal_point['true positive rate'],
-                    ls[0], label=' ', color=color, ms=3, mfc='none', mew=0.75, zorder=10)
-        axes[0].plot(optimal_point['false positive rate'], optimal_point['true positive rate'],
-                    ls[0], label=' ', color=color, ms=6, mfc='none', mew=0.6, zorder=10)
-        xticks.append([optimal_point['false positive rate'].iloc[0], str(optimal_point['threshold'].iloc[0])])
-        radius = np.sqrt((1-optimal_point['true positive rate'])**2+optimal_point['false positive rate']**2).iloc[0]
-        axes[0].add_patch(plt.Circle((0, 1), radius, color=color, fill=False, clip_on=True, lw=0.25, zorder=-5, ls=ls[1:]))
+        for ax in [axes[0], ax_focus]:
+            ax.plot(statistics_['false positive rate'], statistics_['true positive rate'], 
+                        ls, label=' ', color=color, ms=2, mfc='none', mew=0.5, lw=0.75, zorder=10)
+            ax.plot(optimal_point['false positive rate'], optimal_point['true positive rate'],
+                        ls[0], label=' ', color=color, ms=3, mfc='none', mew=0.75, zorder=10)
+            ax.plot(optimal_point['false positive rate'], optimal_point['true positive rate'],
+                        ls[0], label=' ', color=color, ms=6, mfc='none', mew=0.6, zorder=10)
+            xticks.append([optimal_point['false positive rate'].iloc[0], str(optimal_point['threshold'].iloc[0])])
+            radius = np.sqrt((100-optimal_point['true positive rate'])**2+optimal_point['false positive rate']**2).iloc[0]
+            ax.add_patch(plt.Circle((0, 100), radius, color=color, fill=False, clip_on=True, lw=0.25, zorder=-5, ls=ls[1:]))
 
-    radius = np.sqrt((1-optimal_point['true positive rate'])**2+optimal_point['false positive rate']**2).iloc[0]
-    axes[0].add_patch(plt.Circle((0, 1), radius, color=cmap(0.), fill=False, clip_on=True, lw=0.25, zorder=-5))
-    ax_focus = axes[0].inset_axes([0.43, 0.1, 0.53, 0.53], xlim=(-0.01, 0.16), ylim=(0.84, 1.01))
-    ax_focus.tick_params(axis='both', labelsize=8, pad=1)
-    ax_focus.set_yticks([0.85, 0.90, 0.95, 1.0])
-    ax_focus.set_xticks([0, 0.05, 0.10, 0.15])
-    for statistics_, optimal_, color, ls in zip(statistics_list, optimal_list, color_list, ls_list):
-        statistics_ = statistics_.reset_index()
-        optimal_point = statistics_[statistics_['threshold']==optimal_['threshold'].iloc[0]]
-        statistics_ = statistics_[['false positive rate','true positive rate']].drop_duplicates()
-        ax_focus.plot(statistics_['false positive rate'], statistics_['true positive rate'], 
-                    ls, label=' ', color=color, ms=2, mfc='none', mew=0.5, lw=0.75, zorder=10)
-        ax_focus.plot(optimal_point['false positive rate'], optimal_point['true positive rate'],
-                    ls[0], label=' ', color=color, ms=3, mfc='none', mew=0.75, zorder=10)
-        ax_focus.plot(optimal_point['false positive rate'], optimal_point['true positive rate'],
-                    ls[0], label=' ', color=color, ms=6, mfc='none', mew=0.6, zorder=10)
-        xticks.append([optimal_point['false positive rate'].iloc[0], str(optimal_point['threshold'].iloc[0])])
-        radius = np.sqrt((1-optimal_point['true positive rate'])**2+optimal_point['false positive rate']**2).iloc[0]
-        ax_focus.add_patch(plt.Circle((0, 1), radius, color=color, fill=False, clip_on=True, lw=0.35, zorder=-5, ls=ls[1:]))
     rect, lines = axes[0].indicate_inset_zoom(ax_focus, edgecolor='k')
     for line in lines:
         line.set_color('k')
@@ -429,12 +416,12 @@ def plot_warning(warning_ttc, warning_drac, warning_psd, warning_unified):
                     (handles[9]), (handles[10],handles[11])],
                     ['PSD', 'Optimal PSD', 'DRAC', 'Optimal DRAC', 'TTC', 'Optimal TTC', 'Unified', 'Optimal Unified'],
                     bbox_to_anchor=(1., 0.5), loc='center left', fontsize=8, frameon=False)
-    axes[0].set_xlabel('False positive rate')
+    axes[0].set_xlabel('False positive rate (%)', labelpad=1)
     axes[0].set_title('ROC curves of metrics', fontsize=9)
-    axes[0].set_xlim(-0.05, 1.05)
-    axes[0].set_ylabel('True positive rate')
-    axes[0].set_ylim(-0.05, 1.05)
-    axes[0].set_yticks([0, 0.2, 0.4, 0.6, 0.8, 1])
+    axes[0].set_xlim(-5, 105)
+    axes[0].set_ylabel('True positive rate (%)', labelpad=0)
+    axes[0].set_ylim(-5, 105)
+    axes[0].set_yticks([0, 20, 40, 60, 80, 100])
 
     selected_list = [psd_selected, drac_selected, ttc_selected, unified_selected]
     for _selected, color, marker, label, pos in zip(selected_list, color_list, ['s','p','H','o'], ['PSD', 'DRAC', 'TTC', 'Unified'], [0, 1, 2, 3]):

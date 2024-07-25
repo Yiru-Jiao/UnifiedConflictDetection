@@ -15,6 +15,16 @@ This study proposes a unified theory and statistical learning approach for traff
 ## Package requirements
 `numpy`, `pandas`, `tqdm`, `scipy`, `joblib`, `pytorch`, `gpytorch=1.11`, `opencv`, `imageio`, `matplotlib`, `jupyter notebook`
 
+## In order to reuse the trained model:
+- __Step 0 Getting familiar with use__
+    - Go the directory `./DirectReuse/` and use the jupyter notebook `test.ipynb` to familiarise with the functions. The notebook provides test examples for both conflict probability estimation and conflict intensity evaluation.
+- __Step 1 Model preparation__
+    - Copy the files in the directory `./DirectReuse/`, except for `test.ipynb`, to where you want to reuse the model.
+- __Step 2 Use it in oneline__
+    - Now the model is ready to use after `from unified_conflit_detection import *`, with one single function `assess_conflict(states,*args)`! The function takes the states of two potentially interacting vehicles as input and returns either 1) conflict probability at a certain intensity level or 2) maximum possible conflict intensity.
+
+**Note:* the trained model currently considers limited information for methodology demonstration purposes. You may consider training a more sophisticated model, or following up with the authors for future updates.
+
 ## In order to repeat the experiments:
 - __Step 0 Data preparation__
     - Step 0.1 Apply for and download the highD dataset from [the website](https://levelxdata.com/highd-dataset/) and put the data in the folder `./Data/RawData/highD/`.

@@ -4,3 +4,4 @@
 **/*.csv
 **/*.h5
 **/*.pth
+!DirectReuse/*.pth

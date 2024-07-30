@@ -187,8 +187,8 @@ def compute_phi(events, path_output):
     model_idx = 52
     num_inducing_points = 100
     pipeline = train_val_test(device, num_inducing_points)
-    pipeline.model.load_state_dict(torch.load(path_output+f'trained_models/highD_LC/beta={beta}/model_{model_idx}epoch.pth', map_location=torch.device(device)))
-    pipeline.likelihood.load_state_dict(torch.load(path_output+f'trained_models/highD_LC/beta={beta}/likelihood_{model_idx}epoch.pth', map_location=torch.device(device)))
+    pipeline.model.load_state_dict(torch.load(path_output+f'trained_models/highD_LC/beta={beta}/model_{model_idx}epoch.pth', map_location=torch.device(device), weights_only=True))
+    pipeline.likelihood.load_state_dict(torch.load(path_output+f'trained_models/highD_LC/beta={beta}/likelihood_{model_idx}epoch.pth', map_location=torch.device(device), weights_only=True))
     pipeline.model.eval()
     pipeline.likelihood.eval()
     model = pipeline.model.to(device)

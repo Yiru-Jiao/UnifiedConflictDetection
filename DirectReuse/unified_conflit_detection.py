@@ -74,8 +74,8 @@ def define_model(num_inducing_points):
 
 ## Load trained model
 model, likelihood = define_model(num_inducing_points=100) # number of inducing points is determined when training and cannot be changed here
-model.load_state_dict(torch.load(f'./model_52epoch.pth', map_location=torch.device(device)))
-likelihood.load_state_dict(torch.load(f'./likelihood_52epoch.pth', map_location=torch.device(device)))
+model.load_state_dict(torch.load(f'./model_52epoch.pth', map_location=torch.device(device), weights_only=True))
+likelihood.load_state_dict(torch.load(f'./likelihood_52epoch.pth', map_location=torch.device(device), weights_only=True))
 model.eval()
 likelihood.eval()
 model = model.to(device)

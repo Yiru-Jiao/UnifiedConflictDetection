@@ -231,8 +231,8 @@ class train_val_test():
         for count_epoch, file_epoch in progress_bar:
 
             # Load trained parameters
-            self.model.load_state_dict(torch.load(file_epoch.replace('likelihood','model'), map_location=torch.device(self.device)))
-            self.likelihood.load_state_dict(torch.load(file_epoch, map_location=torch.device(self.device)))
+            self.model.load_state_dict(torch.load(file_epoch.replace('likelihood','model'), map_location=torch.device(self.device), weights_only=True))
+            self.likelihood.load_state_dict(torch.load(file_epoch, map_location=torch.device(self.device), weights_only=True))
             progress_bar.set_description(f'Epoch {count_epoch}')
 
             self.model.eval()

@@ -1,0 +1,45 @@
+[project]
+name = "unified-conflict-detection"
+version = "1.0.0"
+authors = [
+    { name = "Yiru Jiao", email = "y.jiao-1@tudelft.nl"},
+]
+description = "A Unified Theory and Statistical Learning Approach for Traffic Conflict Detection."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy==2.1.1",
+    "pandas==2.2.2",
+    "numexpr==2.10.1",
+    "tables==3.10.1",
+    "tqdm==4.66.5",
+    "scipy==1.14.1",
+    "opencv-python==4.10.0.84",
+    "imageio==2.35.1",
+    "matplotlib==3.9.2",
+    "torch==2.4.1+cu124",
+    "gpytorch==1.13",
+    "jupyter==1.1.1",
+]
+
+[project.urls]
+Homepage = "https://doi.org/10.48550/arXiv.2407.10959"
+Repository = "https://github.com/Yiru-Jiao/Two-Dimensional-Time-To-Collision.git"
+Issues = "https://github.com/Yiru-Jiao/Two-Dimensional-Time-To-Collision/issues"
+
+[tool.rye]
+managed = true
+lock-with-sources = true
+virtual = true
+
+[[tool.rye.sources]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cu124/torch/"
+type = "find-links"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true

@@ -13,14 +13,16 @@ Dynamic visualisations in this paper are saved in the folder [`./Data/DynamicFig
 This study proposes a unified theory and statistical learning approach for traffic conflict detection, addressing the long-existing call for a consistent and comprehensive methodology to evaluate the collision risk emerging in road user interactions. The proposed theory assumes context-dependent probabilistic collision risk and frames conflict detection as assessing this risk by statistical learning of extreme events in daily interactions. Experiments using real-world trajectory data are conducted for demonstration. Firstly, a unified metric for indicating conflicts is trained with lane-changing interactions on German highways. This metric and other existing metrics are then applied to near-crash events from the 100-Car Naturalistic Driving Study in the U.S. for performance comparison. Results of the experiments show that the trained metric provides effective collision warnings,  generalises across distinct datasets and traffic environments, covers a broad range of conflict types, and delivers a long-tailed distribution of conflict intensity. Reflecting on these results, the proposed theory ensures consistent evaluation by a generic formulation that encompasses varying assumptions of traffic conflicts; the statistical learning approach then enables a comprehensive consideration of influencing factors such as motion states of road users, environment conditions, and participant characteristics. Therefore, the theory and learning approach jointly provide an explainable and adaptable methodology for conflict detection among different road users and across various interaction scenarios. This promises to reduce accidents and improve overall traffic safety, by enhanced safety assessment of traffic infrastructures, more effective collision warning systems for autonomous driving, and a deeper understanding of road user behaviour in different traffic conditions.
 
 ## Dependencies
-Ensure [Rye](https://rye-up.com/guide/installation/) is installed on your machine and run:
+
+To reuse the methods in general, with any version of python that satisfies the requirements of `gpytorch` version 1.11, the existing code should work without any modification. Minor modifications may be needed for other dependencies.
+
+To reproduce the results in the same python environment, please ensure [Rye](https://rye-up.com/guide/installation/) is installed on your machine and run:
 
 ```bash
 rye sync
 ```
 
-Alternatively, you can manually install Python 3.12.4, set up a virtual environment,
-and install the dependencies from `requirements-dev.lock` using `pip`:
+Alternatively, you may manually install `gpytorch=1.11` and `pytables` with Python 3.10+. For an encapsulated environment, you may create a virtual environment with Python 3.12.4 and install the dependencies from `requirements-dev.lock` using `pip`:
 
 ```bash
 pip install -r requirements-dev.lock

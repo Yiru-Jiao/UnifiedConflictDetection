@@ -72,7 +72,7 @@ fqdn==1.5.1
     # via jsonschema
 fsspec==2024.9.0
     # via torch
-gpytorch==1.13
+gpytorch==1.11
 h11==0.14.0
     # via httpcore
 httpcore==1.0.5
@@ -98,7 +98,6 @@ ipywidgets==8.1.5
 isoduration==20.11.0
     # via jsonschema
 jaxtyping==0.2.19
-    # via gpytorch
     # via linear-operator
 jedi==0.19.1
     # via ipython
@@ -173,7 +172,6 @@ matplotlib-inline==0.1.7
 mistune==3.0.2
     # via nbconvert
 mpmath==1.3.0
-    # via gpytorch
     # via linear-operator
     # via sympy
 msgpack==1.1.0
@@ -201,7 +199,7 @@ notebook-shim==0.2.4
 numexpr==2.10.1
     # via blosc2
     # via tables
-numpy==2.1.1
+numpy==1.26.4
     # via blosc2
     # via contourpy
     # via imageio
@@ -294,7 +292,6 @@ rpds-py==0.20.0
 scikit-learn==1.5.2
     # via gpytorch
 scipy==1.14.1
-    # via gpytorch
     # via linear-operator
     # via scikit-learn
 send2trash==1.8.3

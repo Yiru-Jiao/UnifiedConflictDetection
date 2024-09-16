@@ -8,17 +8,18 @@ description = "A Unified Theory and Statistical Learning Approach for Traffic Co
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "numpy==2.1.1",
+    "numpy==1.26.4",
     "pandas==2.2.2",
     "numexpr==2.10.1",
     "tables==3.10.1",
     "tqdm==4.66.5",
     "scipy==1.14.1",
+    "joblib==1.4.2",
     "opencv-python==4.10.0.84",
     "imageio==2.35.1",
     "matplotlib==3.9.2",
     "torch==2.4.1+cu124",
-    "gpytorch==1.13",
+    "gpytorch==1.11",
     "jupyter==1.1.1",
 ]
 

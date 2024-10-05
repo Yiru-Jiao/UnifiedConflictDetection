@@ -324,3 +324,4 @@ pyrightconfig.json
 **/*.h5
 **/*.pth
 !DirectReuse/*.pth
+Visualisation/FigureMaker.ipynb

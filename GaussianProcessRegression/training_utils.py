@@ -39,17 +39,17 @@ class DataOrganiser:
 
     def __getitem__(self, idx):
         # idx is the index of items in the dataset
-        int_suit = self.interaction_situation.loc[self.idx_list[idx]].values
-        int_suit = torch.from_numpy(int_suit).float()
+        int_ctxt = self.interaction_context.loc[self.idx_list[idx]].values
+        int_ctxt = torch.from_numpy(int_ctxt).float()
         cur_spac = self.current_spacing.loc[self.idx_list[idx]].values
         cur_spac = torch.from_numpy(cur_spac).float()
-        return int_suit, cur_spac
+        return int_ctxt, cur_spac
 
     def read_data(self,):
         features = pd.read_hdf(self.path_input + 'current_features_' + self.dataset + '.h5', key='features')
         self.idx_list = features['scene_id'].values
         features = features.set_index('scene_id')
-        self.interaction_situation = features.drop(columns=['s']).copy()
+        self.interaction_context = features.drop(columns=['s']).copy()
         # log-transform spacing, and the spacing must be larger than 0
         if np.any(features['s']<=1e-6):
             warnings.warn('There are spacings smaller than or equal to 0.')
@@ -147,8 +147,8 @@ class train_val_test():
         with torch.no_grad(), gpytorch.settings.fast_pred_var():
             progress_bar = tqdm(enumerate(self.val_dataloader), unit='batch', total=len(self.val_dataloader))
             progress_bar.set_description('Validation')
-            for count_batch, (interaction_situation, current_spacing) in progress_bar:
-                output = self.model(interaction_situation.to(self.device))
+            for count_batch, (interaction_context, current_spacing) in progress_bar:
+                output = self.model(interaction_context.to(self.device))
                 loss = -self.loss_func(output, current_spacing.squeeze().to(self.device)).item()
                 val_loss += loss
                 progress_bar.set_postfix({'val_loss=': val_loss/(count_batch+1)})
@@ -185,10 +185,10 @@ class train_val_test():
 
         for count_epoch in range(num_epochs):
             progress_bar = tqdm(enumerate(self.train_dataloader), unit='batch', total=num_batches)
-            for batch, (interaction_situation, current_spacing) in progress_bar:
+            for batch, (interaction_context, current_spacing) in progress_bar:
                 progress_bar.set_description(f'Epoch {count_epoch}')
 
-                output = self.model(interaction_situation.to(self.device))
+                output = self.model(interaction_context.to(self.device))
                 loss = -self.loss_func(output, current_spacing.squeeze().to(self.device))
                 loss_records[count_epoch, batch] = loss.item()
                 progress_bar.set_postfix({'lr=': self.optimizer.param_groups[0]['lr'], 'loss=': loss.item()})
@@ -241,8 +241,8 @@ class train_val_test():
             for data_loader, setname in zip([self.train_dataloader, self.val_dataloader, self.test_dataloader], ['train','val','test']):
                 num_batches = len(data_loader)
                 with torch.no_grad(), gpytorch.settings.fast_pred_var():
-                    for interaction_situation, current_spacing in tqdm(data_loader, desc=setname, total=num_batches):
-                        f_dist = self.model(interaction_situation.to(self.device))
+                    for interaction_context, current_spacing in tqdm(data_loader, desc=setname, total=num_batches):
+                        f_dist = self.model(interaction_context.to(self.device))
                         loss = -self.loss_func(f_dist, current_spacing.squeeze().to(self.device))
                         self.evaluation.loc[count_epoch,setname+'_loss'] += loss.item()
                         y_dist = self.likelihood(f_dist)

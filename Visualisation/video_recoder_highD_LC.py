@@ -105,11 +105,11 @@ for idx in summary2vis.index:
     rho = coortrans.angle(1, 0, df_relative['x_j'], df_relative['y_j']).reset_index().rename(columns={0:'rho'})
     rho['frame_id'] = df_relative['frame_id']
     features = ['length_i','length_j','hx_j','hy_j','delta_v','delta_v2','speed_i2','speed_j2','acc_i','rho']
-    interaction_situation = df.drop(columns=['hx_j','hy_j']).merge(heading_j, on='frame_id').merge(rho, on='frame_id')
-    interaction_situation = interaction_situation[features+['frame_id']].set_index('frame_id')
+    interaction_context = df.drop(columns=['hx_j','hy_j']).merge(heading_j, on='frame_id').merge(rho, on='frame_id')
+    interaction_context = interaction_context[features+['frame_id']].set_index('frame_id')
 
     with torch.no_grad(), gpytorch.settings.fast_pred_var():
-        f_dist = model(torch.Tensor(interaction_situation.values).to(device))
+        f_dist = model(torch.Tensor(interaction_context.values).to(device))
         y_dist = likelihood(f_dist)
         mu_list, sigma_list = y_dist.mean.cpu().numpy(), y_dist.variance.sqrt().cpu().numpy()
     df['mu'] = mu_list
@@ -122,6 +122,6 @@ for idx in summary2vis.index:
 
     for frameid in tqdm(df['frame_id'].values, desc=f'{veh_id_i}_{veh_id_j}'):
         fig = visual_highD(lane_markings, frameid, veh_i, veh_j, df, df_view_i, other_vehs, other_vehs_view_i, 
-                           interaction_situation, model, likelihood, device, lc_start, lc_end)
+                           interaction_context, model, likelihood, device, lc_start, lc_end)
         fig.savefig(save_dir+f'frame_{frameid}.png', bbox_inches='tight', dpi=600)
         plt.close(fig)

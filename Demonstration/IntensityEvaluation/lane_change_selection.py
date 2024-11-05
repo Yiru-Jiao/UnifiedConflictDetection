@@ -123,12 +123,12 @@ for loc_id in range(6, 0, -1):
                 df_relative = coortrans.transform_coor(df, view='relative')
                 rho = coortrans.angle(1, 0, df_relative['x_j'], df_relative['y_j']).reset_index().rename(columns={0:'rho'})
                 rho['frame_id'] = df_relative['frame_id']
-                interaction_situation = df.drop(columns=['hx_j','hy_j']).merge(heading_j, on='frame_id').merge(rho, on='frame_id')
+                interaction_context = df.drop(columns=['hx_j','hy_j']).merge(heading_j, on='frame_id').merge(rho, on='frame_id')
                 features = ['length_i','length_j','hx_j','hy_j','delta_v','delta_v2','speed_i2','speed_j2','acc_i','rho']
-                interaction_situation = interaction_situation[features+['frame_id']].set_index('frame_id')
+                interaction_context = interaction_context[features+['frame_id']].set_index('frame_id')
 
                 with torch.no_grad(), gpytorch.settings.fast_pred_var():
-                    f_dist = model(torch.Tensor(interaction_situation.values).to(device))
+                    f_dist = model(torch.Tensor(interaction_context.values).to(device))
                     y_dist = likelihood(f_dist)
                     mu_list, sigma_list = y_dist.mean.cpu().numpy(), y_dist.variance.sqrt().cpu().numpy()
                 df['mu'] = mu_list

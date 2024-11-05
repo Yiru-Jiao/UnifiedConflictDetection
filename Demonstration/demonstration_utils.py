@@ -179,8 +179,8 @@ def compute_phi(events, path_output):
     events_relative = coortrans.transform_coor(events, view='relative')
     rho = coortrans.angle(1, 0, events_relative['x_j'], events_relative['y_j']).reset_index().rename(columns={0:'rho'})
     rho[['trip_id','time']] = events_relative[['trip_id','time']]
-    interaction_situation = events.drop(columns=['hx_j','hy_j']).merge(heading_j, on=['trip_id','time']).merge(rho, on=['trip_id','time'])
-    interaction_situation = interaction_situation[features+['trip_id','time']]
+    interaction_context = events.drop(columns=['hx_j','hy_j']).merge(heading_j, on=['trip_id','time']).merge(rho, on=['trip_id','time'])
+    interaction_context = interaction_context[features+['trip_id','time']]
 
     ## Load trained model
     beta = 5
@@ -196,12 +196,12 @@ def compute_phi(events, path_output):
 
     ## Compute mu_list, sigma_list
     with torch.no_grad(), gpytorch.settings.fast_pred_var():
-        f_dist = model(torch.Tensor(interaction_situation[features].values).to(device))
+        f_dist = model(torch.Tensor(interaction_context[features].values).to(device))
         y_dist = likelihood(f_dist)
         mu_list, sigma_list = y_dist.mean.cpu().numpy(), y_dist.variance.sqrt().cpu().numpy()
 
-    proximity_phi = pd.DataFrame({'trip_id': interaction_situation['trip_id'].values,
-                                  'time': interaction_situation['time'].values,
+    proximity_phi = pd.DataFrame({'trip_id': interaction_context['trip_id'].values,
+                                  'time': interaction_context['time'].values,
                                   'mu': mu_list,
                                   'sigma': sigma_list})
 

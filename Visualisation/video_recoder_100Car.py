@@ -101,11 +101,11 @@ for idx, folder in enumerate(folder_list):
         rho = coortrans.angle(1, 0, df_relative['x_j'], df_relative['y_j']).reset_index().rename(columns={0:'rho'})
         rho['time'] = df_relative['time']
         df_relative = df_relative.set_index('time')
-        interaction_situation = df.drop(columns=['hx_j','hy_j']).merge(heading_j, on='time').merge(rho, on='time')
-        interaction_situation = interaction_situation[features+['time']].set_index('time')
+        interaction_context = df.drop(columns=['hx_j','hy_j']).merge(heading_j, on='time').merge(rho, on='time')
+        interaction_context = interaction_context[features+['time']].set_index('time')
 
         for t in tqdm(df['time'], desc=f'Trip {trip_id}'):
-            fig = visual_100Car(t, df, df_view_i, df_relative, interaction_situation, 
+            fig = visual_100Car(t, df, df_view_i, df_relative, interaction_context, 
                                model, likelihood, device, n, conflict_start, conflict_end)
             fig.savefig(save_dir+f'frame_{int(t*100)}.png', bbox_inches='tight', dpi=600)
             plt.close(fig)

@@ -88,7 +88,7 @@ def draw_vehs_ij(ax, vehs_ij, draw_j=True, arrow=True):
     return ax
 
 
-def visual_100Car(t, df, df_view_i, df_relative, interaction_situation, model, likelihood, device, n, conflict_start, conflict_end):
+def visual_100Car(t, df, df_view_i, df_relative, interaction_context, model, likelihood, device, n, conflict_start, conflict_end):
     fig = plt.figure(figsize=(7.5,2.7))
     gs = fig.add_gridspec(24, 29, wspace=1)
     cmap = mpl.cm.plasma
@@ -173,13 +173,13 @@ def visual_100Car(t, df, df_view_i, df_relative, interaction_situation, model, l
     df2compute = coortrans.transform_coor(df2compute, view='relative')
     rho_list = coortrans.angle(1, 0, df2compute['x_j'], df2compute['y_j'])
     s_list = np.sqrt(df2compute['x_j']**2 + df2compute['y_j']**2).values
-    virtual_scene = np.array([interaction_situation.loc[t].values]*len(rho_list))
+    virtual_scene = np.array([interaction_context.loc[t].values]*len(rho_list))
     virtual_scene[:,-1] = rho_list
     with torch.no_grad(), gpytorch.settings.fast_pred_var():
         f_dist = model(torch.Tensor(virtual_scene).to(device))
         y_dist = likelihood(f_dist)
         mu_list, sigma_list = y_dist.mean.cpu().numpy(), y_dist.variance.sqrt().cpu().numpy()
-        f_dist = model(torch.Tensor(np.array([interaction_situation.loc[t].values])).to(device))
+        f_dist = model(torch.Tensor(np.array([interaction_context.loc[t].values])).to(device))
         y_dist = likelihood(f_dist)
         mu, sigma = y_dist.mean.cpu().numpy()[0], y_dist.variance.sqrt().cpu().numpy()[0]
 
@@ -288,7 +288,7 @@ def locate_lane_change(reference, lateral_position, lane_markings, veh_width, re
         return ref_start, ref_end
 
 
-def visual_highD(lane_markings, frameid, veh_i, veh_j, df, df_view_i, other_vehs, other_vehs_view_i, interaction_situation, model, likelihood, device, frame_1, frame_2):
+def visual_highD(lane_markings, frameid, veh_i, veh_j, df, df_view_i, other_vehs, other_vehs_view_i, interaction_context, model, likelihood, device, frame_1, frame_2):
     fig = plt.figure(figsize=(7.5,4))
     gs = fig.add_gridspec(28, 30, wspace=1)
 
@@ -385,7 +385,7 @@ def visual_highD(lane_markings, frameid, veh_i, veh_j, df, df_view_i, other_vehs
     df2compute = coortrans.transform_coor(df2compute, view='relative')
     rho_list = coortrans.angle(1, 0, df2compute['x_j'], df2compute['y_j'])
     s_list = np.sqrt(df2compute['x_j']**2 + df2compute['y_j']**2).values
-    virtual_scene = np.array([interaction_situation.loc[frameid].values]*len(rho_list))
+    virtual_scene = np.array([interaction_context.loc[frameid].values]*len(rho_list))
     virtual_scene[:,-1] = rho_list
     with torch.no_grad(), gpytorch.settings.fast_pred_var():
         f_dist = model(torch.Tensor(virtual_scene).to(device))

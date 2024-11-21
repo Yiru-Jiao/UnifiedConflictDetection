@@ -1,6 +1,6 @@
-# Code for "A Unified Theory and Statistical Learning Approach for Traffic Conflict Detection"
+# Code for "A Unified Probabilistic Approach to Traffic Conflict Detection"
 
-This study is in submission. A preprint is available at [arXiv](https://arxiv.org/abs/2407.10959). __Questions, suggestions, and collaboration are welcome. Please feel free to reach out via email or GitHub Issues__.
+This study is under review. A preprint is available at [arXiv](https://arxiv.org/abs/2407.10959). __Questions, suggestions, and collaboration are welcome. Please feel free to reach out via email or GitHub Issues__.
 
 ## Access to dynamic figures
 Dynamic visualisations in this paper are saved in the folder [`./Data/DynamicFigures/`](Data/DynamicFigures/). Below we present the example in Figure 9 of a conflict where the ego (red) vehicle changes lane twice continuously and has a potential collision with the target (blue) vehicle in the intermediate lane.
@@ -10,7 +10,7 @@ Dynamic visualisations in this paper are saved in the folder [`./Data/DynamicFig
 </p>
 
 ## Abstract
-This study proposes a unified theory and statistical learning approach for traffic conflict detection, addressing the long-existing call for a consistent and comprehensive methodology to evaluate the collision risk emerging in road user interactions. The proposed theory assumes context-dependent probabilistic collision risk and frames conflict detection as assessing this risk by statistical learning of extreme events in daily interactions. Experiments using real-world trajectory data are conducted for demonstration. Firstly, a unified metric for indicating conflicts is trained with lane-changing interactions on German highways. This metric and other existing metrics are then applied to near-crash events from the 100-Car Naturalistic Driving Study in the U.S. for performance comparison. Results of the experiments show that the trained metric provides effective collision warnings,  generalises across distinct datasets and traffic environments, covers a broad range of conflict types, and delivers a long-tailed distribution of conflict intensity. Reflecting on these results, the proposed theory ensures consistent evaluation by a generic formulation that encompasses varying assumptions of traffic conflicts; the statistical learning approach then enables a comprehensive consideration of influencing factors such as motion states of road users, environment conditions, and participant characteristics. Therefore, the theory and learning approach jointly provide an explainable and adaptable methodology for conflict detection among different road users and across various interaction scenarios. This promises to reduce accidents and improve overall traffic safety, by enhanced safety assessment of traffic infrastructures, more effective collision warning systems for autonomous driving, and a deeper understanding of road user behaviour in different traffic conditions.
+Traffic conflict detection is essential for proactive road safety by identifying potential collisions before they occur. Existing methods rely on surrogate safety measures tailored to specific interactions (e.g., car-following, side-swiping, or path-crossing) and require varying thresholds in different traffic conditions. This variation leads to inconsistencies and limited adaptability of conflict detection in evolving traffic environments. Consequently, a need persists for consistent detection of traffic conflicts across interaction contexts. To address this need, this study proposes a unified probabilistic approach. The proposed approach establishes a unified framework of traffic conflict detection, where traffic conflicts are formulated as context-dependent extreme events of road user interactions. The detection of conflicts is then decomposed into a series of statistical learning tasks: representing interaction contexts, inferring proximity distributions, and assessing extreme collision risk. The unified formulation accommodates diverse hypotheses of traffic conflicts and the learning tasks enable data-driven analysis of factors such as motion states of road users, environment conditions, and participant characteristics. Jointly, this approach supports consistent and comprehensive evaluation of the collision risk emerging in road user interactions. Our experiments using real-world trajectory data show that the approach provides effective collision warnings, generalises across distinct datasets and traffic environments, covers a broad range of conflict types, and captures a long-tailed distribution of conflict intensity. The findings highlight its potential to enhance the safety assessment of traffic infrastructures and policies, improve collision warning systems for autonomous driving, and deepen the understanding of road user behaviour in safety-critical interactions.
 
 ## Dependencies 
 **Thanks to @Jeffrey-Lim for providing the solution with Rye.**
@@ -72,9 +72,9 @@ pip install -r requirements-dev.lock
 
 ## Citation
 ````latex
-@misc{jiao2024,
-      title={A unified theory and statistical learning approach for traffic conflict detection}, 
-      author={Jiao, Yiru and Calvert, Simeon C. and van Cranenburgh, Sander and van Lint, Hans},
+@misc{jiao2024unified,
+      title={A Unified Probabilistic Approach to Traffic Conflict Detection}, 
+      author={Yiru Jiao and Simeon C. Calvert and Sander van Cranenburgh and Hans van Lint},
       year={2024},
       eprint={2407.10959},
       archivePrefix={arXiv},

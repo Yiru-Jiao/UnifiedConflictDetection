@@ -1,7 +1,6 @@
 # Code for "A Unified Probabilistic Approach to Traffic Conflict Detection"
 
-This study is being published in 
-Analytic Methods in Accident Research and accessible via https://doi.org/10.1016/j.amar.2024.100369. An unofficially formatted version with vector graphics is available at [arXiv](https://arxiv.org/abs/2407.10959). __Questions, suggestions, and collaboration are welcome. Please feel free to reach out via email or GitHub Issues__.
+This study is being published in Analytic Methods in Accident Research and accessible via https://doi.org/10.1016/j.amar.2024.100369. Note that I'm still negotiating with the journal to have paper proofing with LaTeX to ensure correct equations. For your convenience, an unofficially formatted version (with vector graphics) is available at [arXiv](https://arxiv.org/abs/2407.10959). __Questions, suggestions, and collaboration are welcome. Please feel free to reach out via email or GitHub Issues__.
 
 ## Access to dynamic figures
 Dynamic visualisations in this paper are saved in the folder [`./Data/DynamicFigures/`](Data/DynamicFigures/). Below we present the example in Figure 9 of a conflict where the ego (red) vehicle changes lane twice continuously and has a potential collision with the target (blue) vehicle in the intermediate lane.
@@ -73,12 +72,12 @@ pip install -r requirements-dev.lock
 
 ## Citation
 ````latex
-@misc{jiao2024unified,
+@article{jiao2024unified,
       title={A Unified Probabilistic Approach to Traffic Conflict Detection}, 
-      author={Yiru Jiao and Simeon C. Calvert and Sander van Cranenburgh and Hans van Lint},
-      year={2024},
-      eprint={2407.10959},
-      archivePrefix={arXiv},
-      primaryClass={cs.RO},
+      author={Yiru Jiao and Simeon C. Calvert and Sander {van Cranenburgh} and Hans {van Lint}},
+      year={2025},
+      journal={Analytic Methods in Accident Research},
+      volume={45},
+      pages={100369}
 }
 ````

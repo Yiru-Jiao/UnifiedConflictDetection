@@ -1,4 +1,4 @@
-# Code for "A Unified Probabilistic Approach to Traffic Conflict Detection"
+# A Unified Probabilistic Approach to Traffic Conflict Detection
 
 This study is published in Analytic Methods in Accident Research and accessible via https://doi.org/10.1016/j.amar.2024.100369. For your convenience, an unofficially formatted version is available at [arXiv](https://arxiv.org/abs/2407.10959). __Questions, suggestions, and collaboration are welcome. Please feel free to reach out via email or GitHub Issues__.
 
@@ -9,8 +9,12 @@ Dynamic visualisations in this paper are saved in the folder [`./Data/DynamicFig
   <img src="Data/DynamicFigures/Figure9/Figure9.gif" alt="animated" width="75%" height="75%"/>
 </p>
 
-## Abstract
-Traffic conflict detection is essential for proactive road safety by identifying potential collisions before they occur. Existing methods rely on surrogate safety measures tailored to specific interactions (e.g., car-following, side-swiping, or path-crossing) and require varying thresholds in different traffic conditions. This variation leads to inconsistencies and limited adaptability of conflict detection in evolving traffic environments. Consequently, a need persists for consistent detection of traffic conflicts across interaction contexts. To address this need, this study proposes a unified probabilistic approach. The proposed approach establishes a unified framework of traffic conflict detection, where traffic conflicts are formulated as context-dependent extreme events of road user interactions. The detection of conflicts is then decomposed into a series of statistical learning tasks: representing interaction contexts, inferring proximity distributions, and assessing extreme collision risk. The unified formulation accommodates diverse hypotheses of traffic conflicts and the learning tasks enable data-driven analysis of factors such as motion states of road users, environment conditions, and participant characteristics. Jointly, this approach supports consistent and comprehensive evaluation of the collision risk emerging in road user interactions. Our experiments using real-world trajectory data show that the approach provides effective collision warnings, generalises across distinct datasets and traffic environments, covers a broad range of conflict types, and captures a long-tailed distribution of conflict intensity. The findings highlight its potential to enhance the safety assessment of traffic infrastructures and policies, improve collision warning systems for autonomous driving, and deepen the understanding of road user behaviour in safety-critical interactions.
+## Highlights
+- Conflicts are modelled as context-dependent extreme events in normal interactions.
+- Unified framework enables consistent conflict detection across traffic environments.
+- Statistical learning enables data-driven and comprehensive analysis of conflicts.
+- The unified approach detects conflicts at least as well as any existing metrics.
+- This approach supports scalable and reliable traffic safety research in the future.
 
 ## Dependencies 
 **Thanks to @Jeffrey-Lim for providing the solution with Rye.**
@@ -30,19 +34,26 @@ pip install -r requirements-dev.lock
 ```
 
 ## In order to reuse the trained model:
-- __Step 0 Getting familiar with use__
+- __Step 1 Getting familiar with use__
     - Go the directory `./DirectReuse/` and use the jupyter notebook `test.ipynb` to familiarise with the functions. The notebook provides test examples for both conflict probability estimation and conflict intensity evaluation.
-- __Step 1 Model preparation__
+- __Step 2 Model preparation__
     - Copy the files in the directory `./DirectReuse/`, except for `test.ipynb`, to where you want to reuse the model.
-- __Step 2 Use it in oneline__
+- __Step 3 Use it in oneline__
     - Now the model is ready to use after `from unified_conflit_detection import *`, with one single function `assess_conflict(states,*args)`! The function takes the states of two potentially interacting vehicles as input and returns either 1) conflict probability at a certain intensity level or 2) maximum possible conflict intensity.
 
 **Note:* the trained model currently considers limited information for methodology demonstration purposes. You may consider training a more sophisticated model, or following up with the authors for future updates.
 
 ## In order to repeat the experiments:
-- __Step 0 Data preparation__
-    - Step 0.1 Apply for and download the highD dataset from [the website](https://levelxdata.com/highd-dataset/) and put the data in the folder `./Data/RawData/highD/`.
-    - Step 0.2 We have processed and saved the 100Car NDS data in the folder `./Data/RawData/100Car/`. If interested, the readers are welcome to explore original 100Car NDS data with the code in the [repository](https://github.com/Yiru-Jiao/Reconstruct100CarNDSData).
+
+### Data
+- **Raw data**  
+  Apply for and download the highD dataset from [the website](https://levelxdata.com/highd-dataset/) and put the data in the folder `./Data/RawData/highD/`.
+- **Test data**  
+  We have processed and saved the 100Car NDS data in the folder `./Data/RawData/100Car/`. If interested, the readers are welcome to explore original 100Car NDS data with the code in the [repository](https://github.com/Yiru-Jiao/Reconstruct100CarNDSData).
+- **Results**  
+  Resulting data, i.e., a zipped file of the `./Data/` folder excluding subfolders `./Data/RawData/` and `./Data/ProcessedData/`, can be downloaded from <https://doi.org/10.4121/06415947-2b9b-4435-833e-e513ae71a6ed>.
+
+### Step-by-step instructions
 
 - __Step 1 Data processing__
     - Step 1.1 Run `./DataProcessing/preprocessing_highD.py` to add heading directions of vehicles.
